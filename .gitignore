@@ -1,0 +1,4 @@
+__pycache__/
+expense.db
+app/__pycache__/
+migrations/__pycache__/
