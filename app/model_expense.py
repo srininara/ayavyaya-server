@@ -13,6 +13,6 @@ class Expense(db.Model):
     self.amount = amount
 
 def expense_from_dict(the_dict):
-  return Expense(description = the_dict['description'],
-                expense_date = to_date(the_dict['expense_date']),
-                amount = the_dict['amount'])
+  return Expense(description = the_dict.get('description', ''),
+                expense_date = to_date(the_dict.get('expense_date','')),
+                amount = the_dict.get('amount', 0))
