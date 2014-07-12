@@ -6,6 +6,7 @@ from app import db
 from app.model_expense import Expense
 from app.model_expense import expense_from_dict
 from app.api_inputs import to_date
+from app.model_expense import to_json
 
 class ExpenseListAPI(Resource):
 
@@ -16,7 +17,7 @@ class ExpenseListAPI(Resource):
     expense = expense_from_dict(request.json)
     db.session.add(expense)
     db.session.commit()
-    return '',201
+    return to_json(expense),201
 
 class ExpenseAPI(Resource):
   def get(self, id):

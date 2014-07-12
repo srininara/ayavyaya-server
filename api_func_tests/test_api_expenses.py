@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import unittest
 import requests
 import json
@@ -13,7 +14,9 @@ class TestExpensesAPI(unittest.TestCase):
 
     r = requests.post(self.expense_list_API_url,data=json.dumps(payload),headers=headers)
     self.assertEqual(201,r.status_code)
-    print(dir(r))
+    output = json.loads(r.json())
+    print(output['id'])
+    self.assertTrue(output.get('id',-1)!=-1)
 
   # def test_postExpenses_without_description(self):
   #   payload = {'expense_date':'2014-06-29', 'amount':'120.10'}
