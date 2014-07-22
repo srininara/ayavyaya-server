@@ -14,7 +14,7 @@ class TestExpensesAPI(unittest.TestCase):
 
     r = requests.post(self.expense_list_API_url,data=json.dumps(payload),headers=headers)
     self.assertEqual(201,r.status_code)
-    output = json.loads(r.json())
+    output = r.json()
     print(output['id'])
     self.assertTrue(output.get('id',-1)!=-1)
 

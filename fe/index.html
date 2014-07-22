@@ -2,16 +2,59 @@
 <html>
   <head>
     <title>Index</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/app-styles.css">
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap.min.js"></script>
   </head>
-  <body ng-app>
-    <h1>Index</h1>
-    <p id="home">
-      Super home
-    </p>
+  <body>
+    <div class="container" ng-app="expensesManager">
+      <div id="expenses-manager" class="row" ng-controller="ExpensesController">
+        <div class="col-md-6" id="expense-listing">
+          <h3>Expenses Listing</h3>
+          <div class="gridStyle" ng-grid="gridOptions">
+          </div>
+        </div>
+        <div class="col-md-6" id="expense-entry">
+          <h3>Enter Expenses</h3>
+          <div class="form-group">
+            <label for="expense_date">When</label>
+            <div id="expense_date" ng-model="expense.expense_date">
+              <datepicker show-weeks="false" class="well well-sm"></datepicker>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">What</label>
+            <input class="form-control" id="description" type="text"
+              ng-model="expense.description" placeholder="Enter description" />
+          </div>
+          <div class="form-group">
+            <label for="amount">How much!</label>
+            <input class="form-control" id="amount" type="text"
+              ng-model="expense.amount" placeholder="Enter amount" />
+          </div>
+          <button type="button" id="expense-save" class="btn btn-primary"
+            ng-click="save()"><span class="glyphicon glyphicon-thumbs-up"></span> Save </button>
+        </div>
+      </div>
+    </div>
+
+<!-- Minified versions-->
+<!--
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.min.js"></script>
+-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.js"></script>
+
+    <script src="js/expense-manager.js"></script>
   </body>
 </html>

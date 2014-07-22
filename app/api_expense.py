@@ -1,4 +1,3 @@
-import json
 from flask.ext.restful import Resource#, reqparse
 from flask import request
 from app import api
@@ -6,18 +5,19 @@ from app import db
 from app.model_expense import Expense
 from app.model_expense import expense_from_dict
 from app.api_inputs import to_date
-from app.model_expense import to_json
+from app.model_expense import to_dict
 
 class ExpenseListAPI(Resource):
 
   def get(self):
     print("expenses list get")
 
+  # @api.representation('application/json')
   def post(self):
     expense = expense_from_dict(request.json)
     db.session.add(expense)
     db.session.commit()
-    return to_json(expense),201
+    return to_dict(expense),201
 
 class ExpenseAPI(Resource):
   def get(self, id):

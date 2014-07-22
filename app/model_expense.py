@@ -13,17 +13,15 @@ class Expense(db.Model):
     self.expense_date = expense_date
     self.amount = amount
 
-
-
 def expense_from_dict(the_dict):
   return Expense(description = the_dict.get('description', ''),
                 expense_date = to_date(the_dict.get('expense_date','')),
                 amount = the_dict.get('amount', 0))
 
-def to_json(model):
-    json = {}
-    json['id'] = model.id
-    json['description'] = model.description
-    json['expense_date'] = to_str_from_datetime(model.expense_date)
-    json['amount'] = str(model.amount)
-    return dumps(json)
+def to_dict(model):
+    out = {}
+    out['id'] = model.id
+    out['description'] = model.description
+    out['expense_date'] = to_str_from_datetime(model.expense_date)
+    out['amount'] = str(model.amount)
+    return out
