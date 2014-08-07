@@ -12,7 +12,6 @@ class ExpenseListAPI(Resource):
   def get(self):
     print("expenses list get")
 
-  # @api.representation('application/json')
   def post(self):
     expense = expense_from_dict(request.json)
     db.session.add(expense)
