@@ -17,10 +17,6 @@ class ExpenseListAPI(Resource):
     db.session.add(expense)
     db.session.commit()
     return to_dict(expense),201
-    # expense = Expense(request.json)
-    # db.session.add(expense)
-    # db.session.commit()
-    # return expense.to_primitive(),201
 
 class ExpenseAPI(Resource):
   def get(self, id):
