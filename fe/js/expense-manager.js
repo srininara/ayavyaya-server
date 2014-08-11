@@ -1,4 +1,4 @@
-var app = angular.module('expensesManager',['ui.bootstrap','restangular','ngGrid']);
+var app = angular.module('expensesManager',['ui.bootstrap','restangular','ngGrid','ngTagsInput']);
 
 app.config(["RestangularProvider",function(RestangularProvider){
 	RestangularProvider.setBaseUrl('/grihasthi/api/v1.0/');
@@ -14,6 +14,7 @@ app.controller('ExpensesController', ['$scope', '$filter', 'ExpenseService', fun
       {field:'description', displayName:'Description'},
       {field:'amount', displayName:'Amount'},
       {field:'expense_date', displayName:'Date'},
+			{displayName:'Tags', cellTemplate: '<div class="ngCellText"><span ng-repeat="tag in row.entity.tags">@{{tag.name}} </span></div>'},
     ]
   };
 
@@ -26,7 +27,13 @@ app.controller('ExpensesController', ['$scope', '$filter', 'ExpenseService', fun
       console.log("Something wrong");
     });
     $scope.expense = createInitializedExpense();
-  }
+  };
+
+	$scope.openDate = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.opened = true;
+	};
 
   function createInitializedExpense() {
     var expense = {};
@@ -34,7 +41,7 @@ app.controller('ExpensesController', ['$scope', '$filter', 'ExpenseService', fun
     expense.amount = 100;
     expense.expense_date = new Date();
     return expense;
-  }
+  };
 
 }]);
 

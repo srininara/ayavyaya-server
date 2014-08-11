@@ -4,6 +4,8 @@ from app import api
 from app import db
 from app.model_expense import Expense
 from app.model_expense import expense_from_dict
+from app.model_tag import Tag
+from app.model_tag import tag_from_dict
 from app.api_inputs import to_date
 from app.model_expense import to_dict
 
@@ -14,6 +16,13 @@ class ExpenseListAPI(Resource):
 
   def post(self):
     expense = expense_from_dict(request.json)
+    tags_data = request.json.get('tags',None)
+
+    if tags_data is not None:
+      for tag_data in tags_data:
+        tag = tag_from_dict(tag_data)
+        if tag is not None:
+          expense.add_tag(tag)
     db.session.add(expense)
     db.session.commit()
     return to_dict(expense),201

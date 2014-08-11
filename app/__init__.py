@@ -18,3 +18,4 @@ api = Api(app)
 from app import api_expense
 from app import model_expense
 from app import app_fe
+from app import model_tag
