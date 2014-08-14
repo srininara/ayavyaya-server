@@ -5,3 +5,4 @@ migrations/__pycache__/
 /.project
 fe_tests/node_modules/
 commonly_used_sqls.txt
+db_loader/DailyExpenseTracker.csv
