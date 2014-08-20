@@ -9,7 +9,7 @@ class TestExpensesAPI(unittest.TestCase):
     self.expense_list_API_url = "http://localhost:5000/grihasthi/api/v1.0/expenses"
 
   def test_post_expenses_without_tags(self):
-    payload = {'description':'test expense without tag', 'expense_date':'2014-06-29', 'amount':'110.10'}
+    payload = {'description':'test expense without tag', 'expense_date':'2014-06-30', 'amount':'110.10'}
     headers = {'content-type': 'application/json'}
 
     r = requests.post(self.expense_list_API_url,data=json.dumps(payload),headers=headers)
