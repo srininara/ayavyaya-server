@@ -34,9 +34,3 @@ def tag_from_dict(the_dict):
     return tag
   else:
     return None
-
-
-
-  return Expense(description = the_dict.get('description', ''),
-                expense_date = to_date(the_dict.get('expense_date','')),
-                amount = the_dict.get('amount', 0))

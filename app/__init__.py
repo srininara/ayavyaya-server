@@ -16,15 +16,12 @@ db = SQLAlchemy(app)
 
 api = Api(app)
 
-
-# @api.representation('application/json')
-# def json(data, code, headers=None):
-#     resp = api.make_response(simplejson.dumps(data, use_decimal=True), code)
-#     resp.headers.extend(headers or {})
-#     return resp
-
 from app import api_expense
 from app import model_expense
 from app import app_fe
 from app import model_tag
 from app import service_expense
+from app import model_expense_category
+from app import model_expense_subcategory
+from app import model_expense_nature
+from app import model_expense_frequency

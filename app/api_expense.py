@@ -28,6 +28,7 @@ class ExpenseAggregatesAPI(Resource):
     print(output)
     return {period:output}, 200
 
+
 api.add_resource(ExpenseListAPI, '/grihasthi/api/v1.0/expenses', endpoint = 'expenses')
 api.add_resource(ExpenseAPI, '/grihasthi/api/v1.0/expenses/<int:id>', endpoint = 'expense')
 api.add_resource(ExpenseAggregatesAPI, '/grihasthi/api/v1.0/expenseAggregates/<string:period>', endpoint = 'expenseAggregates')

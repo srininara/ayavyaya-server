@@ -3,6 +3,16 @@ from app.model_expense import Expense
 from app.model_expense import expense_from_dict
 from app.model_tag import Tag
 from app.model_tag import tag_from_dict
+from app.model_expense_nature import Expense_Nature
+from app.model_expense_nature import expense_nature_from_dict
+from app.model_expense_frequency import Expense_Frequency
+from app.model_expense_frequency import expense_frequency_from_dict
+from app.model_expense_category import Expense_Category
+from app.model_expense_category import expense_category_from_dict
+from app.model_expense_subcategory import Expense_Subcategory
+from app.model_expense_subcategory import expense_subcategory_from_dict
+
+
 from app.api_inputs import to_date
 from app.model_expense import to_dict
 from app.api_inputs import to_str_from_datetime
@@ -17,6 +27,19 @@ def _convert_to_json_friendly_arr_rec(exp_aggr_tuple):
 def add_expense(expense_dict):
   expense = expense_from_dict(expense_dict)
   tags_data = expense_dict.get('tags',None)
+
+  # TODO: Not sure if this belongs here or in the model class
+  expense_nature = expense_nature_from_dict({'name': expense_dict.get('nature')})
+  expense.nature = expense_nature
+
+  expense_frequency = expense_frequency_from_dict({'name': expense_dict.get('frequency')})
+  expense.frequency = expense_frequency
+
+  expense_category = expense_category_from_dict({'name': expense_dict.get('category')})
+  expense.category = expense_category
+
+  expense_subcategory = expense_subcategory_from_dict({'name':expense_dict.get('subcategory')})
+  expense.subcategory = expense_subcategory
 
   if tags_data is not None:
     for tag_data in tags_data:
