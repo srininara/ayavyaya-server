@@ -24,7 +24,7 @@ def to_dict(expense_frequency):
 def expense_frequency_from_dict(the_dict):
   id = the_dict.get('id', -1)
   name = the_dict.get('name', "")
-  description = the_dict.get('description',"")
+  description = the_dict.get('description', "")
   if id != -1:
     expense_frequency = Expense_Frequency.query.get(id)
     return expense_frequency

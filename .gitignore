@@ -8,3 +8,4 @@ commonly_used_sqls.txt
 db_loader/*.csv
 logfile
 analysis/
+.pydevproject

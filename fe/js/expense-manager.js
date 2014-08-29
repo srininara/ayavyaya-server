@@ -2,6 +2,7 @@ var app = angular.module('expensesManager',['ui.bootstrap','restangular','ngGrid
 
 app.config(["RestangularProvider",function(RestangularProvider){
 	RestangularProvider.setBaseUrl('/grihasthi/api/v1.0/');
+  // TODO: Can I remove this interceptor
 	RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred) {
 		var extractedData;
 		// .. to look for getList operations
@@ -52,6 +53,59 @@ app.controller('ExpenseAggregatesCtrl',['$scope','ExpenseAggregateService', func
 
 }]);
 
+
+app.controller('ExpenseCategoryClassificationCtrl',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
+  ExpenseClassificationService.getList("category").then(function(data) {
+    $scope.categoryChartData = data;//[{key: "Daily Aggregates",values: data}];
+  });
+
+  $scope.xFunction = function(){
+    return function(d) {
+        return d.category_name;
+    };
+  }
+
+  $scope.yFunction = function(){
+    return function(d){
+      return d.category_expenses;
+    };
+  }
+
+  $scope.$on('elementMouseover.tooltip.directive', function(angularEvent, event){
+    console.log("rr");  // TODO: Here is where we will launch a mechanism to show sub categories
+  });
+
+
+
+}]);
+
+
+app.controller('ExpenseSubcategoryClassificationCtrl',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
+  ExpenseClassificationService.getList("subcategory").then(function(data) {
+    $scope.subcategoryChartData = data;//[{key: "Daily Aggregates",values: data}];
+  });
+
+  $scope.xFunction = function(){
+    return function(d) {
+        return d.subcategory_name;
+    };
+  }
+
+  $scope.yFunction = function(){
+    return function(d){
+      return d.subcategory_expenses;
+    };
+  }
+
+  $scope.$on('elementMouseover.tooltip.directive', function(angularEvent, event){
+    console.log("rr");  // TODO: Here is where we will launch a mechanism to show sub categories
+  });
+
+
+
+}]);
+
+
 app.controller('ExpensesCtrl', ['$scope', '$filter', 'ExpenseService', function($scope, $filter, ExpenseService) {
 	$scope.expense = createInitializedExpense();
 	$scope.expensesList = [];
@@ -99,4 +153,8 @@ app.factory('ExpenseService', ['Restangular', function(Restangular) {
 
 app.factory('ExpenseAggregateService', ['Restangular', function(Restangular) {
 	return Restangular.one('expenseAggregates');
+}]);
+
+app.factory('ExpenseClassificationService', ['Restangular', function(Restangular) {
+  return Restangular.one('expenseClassification');
 }]);

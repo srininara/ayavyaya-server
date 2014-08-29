@@ -28,14 +28,14 @@ def to_dict(expense_subcategory):
 def expense_subcategory_from_dict(the_dict):
   id = the_dict.get('id', -1)
   name = the_dict.get('name', "")
-  description = the_dict.get('description',"")
+  description = the_dict.get('description', "")
   if id != -1:
     exp_subcategory = Expense_Subcategory.query.get(id)
     return exp_subcategory
-  elif name != "":
+  elif name:
     exp_subcategory = Expense_Subcategory.query.filter_by(name=name).first()
     if exp_subcategory is None:
-      raise ValueError("Can't find a sub category with this name")
+      raise ValueError("Can't find a sub category with this name: ")
     return exp_subcategory
   else:
     raise ValueError("Need to provide name or id")

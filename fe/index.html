@@ -49,8 +49,9 @@
     </div>
 
     <div ng-controller="ExpenseAggregatesCtrl" class="row">
-      <div class="col-md-10" id="expense-graphs">
+      <div class="col-md-8" id="expense-daily-aggregate-graphs">
         <nvd3-discrete-bar-chart
+          id="expense-daily-aggregate-graph"
           data="dailyChartData"
           showXAxis="true"
           showYAxis="true"
@@ -65,6 +66,40 @@
         </nvd3-discrete-bar-chart>
       </div>
     </div>
+
+    <div ng-controller="ExpenseCategoryClassificationCtrl" class="row">
+      <div class="col-md-8" id="expense-category-classifcation-graphs">
+        <nvd3-pie-chart
+          id="expense-category-classifcation-graph"
+          data="categoryChartData"
+          width="650"
+          height="550"
+          x="xFunction()"
+          y="yFunction()"
+          showLabels="true"
+          tooltips="true">
+            <svg></svg>
+        </nvd3-pie-chart>
+      </div>
+    </div>
+
+    <div ng-controller="ExpenseSubcategoryClassificationCtrl" class="row">
+      <div class="col-md-8" id="expense-subcategory-classifcation-graphs">
+        <nvd3-pie-chart
+          id="expense-subcategory-classifcation-graph"
+          data="subcategoryChartData"
+          width="650"
+          height="550"
+          x="xFunction()"
+          y="yFunction()"
+          showLabels="true"
+          tooltips="true">
+            <svg></svg>
+        </nvd3-pie-chart>
+      </div>
+    </div>
+
+
   </div>
 
   <!-- Minified versions-->

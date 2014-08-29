@@ -9,10 +9,10 @@ from app.model_expense_category import to_dict as category_as_dict
 from app.model_expense_subcategory import to_dict as subcategory_as_dict
 
 class Expense(db.Model):
-  id = db.Column(db.Integer, primary_key = True)
+  id = db.Column(db.Integer, primary_key=True)
   description = db.Column(db.String(200))
   expense_date = db.Column(db.DateTime())
-  amount = db.Column(db.Numeric(12,2))
+  amount = db.Column(db.Numeric(12, 2))
 
   category_id = db.Column(db.Integer, db.ForeignKey('expense_category.id'))
   category = db.relationship('Expense_Category')
@@ -38,9 +38,9 @@ class Expense(db.Model):
     self.expense_tags.append(tag)
 
 def expense_from_dict(the_dict):
-  return Expense(description = the_dict.get('description', ''),
-                expense_date = to_date(the_dict.get('expense_date','')),
-                amount = the_dict.get('amount', 0))
+  return Expense(description=the_dict.get('description', ''),
+                expense_date=to_date(the_dict.get('expense_date', '')),
+                amount=the_dict.get('amount', 0))
 
 def to_dict(expense):
     out = {}

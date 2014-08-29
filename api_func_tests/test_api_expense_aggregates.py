@@ -11,8 +11,8 @@ class TestExpenseAggregatesAPI(unittest.TestCase):
   def test_get_daily_expense_aggregates(self):
     input_period = "daily"
     # TODO: First need to check if any data is there in the db. That cannot be done now since it is not supported by the app
-    r = requests.get(self.expense_aggregates_API_url+input_period)
-    self.assertEqual(200,r.status_code)
+    r = requests.get(self.expense_aggregates_API_url + input_period)
+    self.assertEqual(200, r.status_code)
     output = r.json()
     print(output)
     self.assertIsNotNone(output)
@@ -22,10 +22,10 @@ class TestExpenseAggregatesAPI(unittest.TestCase):
 
     # At this point it is assumed that there is something in the db
     self.assertIsNotNone(expenseAggregates)
-    self.assertNotEqual(len(expenseAggregates),0)
+    self.assertNotEqual(len(expenseAggregates), 0)
 
     # print(expenseAggregates)
-    #TODO: Ideally we should get a bunch of expenses and find which one belongs to a single day,
+    # TODO: Ideally we should get a bunch of expenses and find which one belongs to a single day,
     # sum it up and check the output against that
 
 
