@@ -21,15 +21,16 @@ app.controller('ExpenseAggregatesCtrl',['$scope','ExpenseAggregateService', func
 		$scope.dailyChartData = [{key: "Daily Aggregates",values: data}];
 	});
 
-	var colorCategory = ["green", "blue", "red"];
+	var colorCategory = ["green", "blue", "orange", "red"];
 
 	$scope.colorFunction = function() {
 		return function(d, i) {
 			var colorIndex = 0;
 			var y = d[1]
 			if (y>1000 && y<=3000) colorIndex = 1;
-			if (y>3000) colorIndex = 2;
-    	return colorCategory[colorIndex];
+			if (y>3000 && y<=10000) colorIndex = 2;
+			if (y>10000) colorIndex = 3;
+			return colorCategory[colorIndex];
 		};
 	};
 
@@ -52,6 +53,53 @@ app.controller('ExpenseAggregatesCtrl',['$scope','ExpenseAggregateService', func
 	};
 
 }]);
+
+
+app.controller('ExpenseAggregatesMWCtrl',['$scope','ExpenseAggregateService', function($scope, ExpenseAggregateService) {
+  ExpenseAggregateService.getList("dailyMonthWise").then(function(data) {
+    $scope.dailyChartDataMWAll = data;
+//    $scope.dailyChartData = [{key: "Daily Aggregates",values: data}];
+  });
+
+  var colorCategory = ["green", "blue", "orange", "red"];
+
+  $scope.colorFunction = function() {
+    return function(d, i) {
+      var colorIndex = 0;
+      var y = d[1]
+      if (y>1000 && y<=3000) colorIndex = 1;
+      if (y>3000 && y<=10000) colorIndex = 2;
+			if (y>10000) colorIndex = 3;
+      return colorCategory[colorIndex];
+    };
+  };
+
+  $scope.xAxisTickFormatFunction = function() {
+    return function(input) {
+      var dateObj = new Date(input)
+      var day = d3.time.format('%e')(dateObj);
+      var month = d3.time.format('%b')(dateObj);
+      return (day % 10 == 0)?day+"-"+month:"";
+    }
+  };
+
+  $scope.toolTipContentFunction = function(){
+    return function(key, x, y, e, graph) {
+      var dateObj = new Date(e.point[0]);
+      var day = d3.time.format('%e')(dateObj);
+      var month = d3.time.format('%b')(dateObj);
+      return "<p><strong>Expense</strong></p><p>Rs. " + y + ' on ' + day+"-"+month + "</p>"
+    }
+  };
+
+  $scope.xFunction = function(){
+  return function(d){
+    return d[0];
+  };
+}
+
+}]);
+
 
 
 app.controller('ExpenseCategoryClassificationCtrl',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {

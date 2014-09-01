@@ -16,6 +16,8 @@ from app.model_expense_subcategory import expense_subcategory_from_dict
 from app.api_inputs import to_date
 from app.model_expense import to_dict
 from app.api_inputs import to_str_from_datetime
+import datetime
+from dateutil.relativedelta import *
 
 
 def _convert_to_json_friendly_exp_agg(exp_aggr_tuple):
@@ -24,6 +26,11 @@ def _convert_to_json_friendly_exp_agg(exp_aggr_tuple):
 def _convert_to_json_friendly_exp_classication(exp_cat_tuple,prefix):
     return {prefix+"_name": exp_cat_tuple[0]
         , prefix+"_expenses": float(exp_cat_tuple[1])}
+def _get_start_date(months_back):
+  today = datetime.date.today()
+  first = datetime.date(day=1, month=today.month, year=today.year)
+  start = first+relativedelta(months=months_back)
+  return start
 
 def add_expense(expense_dict):
   expense = expense_from_dict(expense_dict)
@@ -52,13 +59,33 @@ def add_expense(expense_dict):
   return to_dict(expense)
 
 def get_expense_aggregates(period):
+  st_date = _get_start_date(-4)
   daily_expenses_tuple_list = db.session.query(
-    Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).group_by(
+    Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(Expense.expense_date>=st_date).group_by(
       Expense.expense_date).order_by(Expense.expense_date).all()
-  daily_expenses = []
-  for daily_expense_tup in daily_expenses_tuple_list:
-    daily_expenses.append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
-  return daily_expenses
+  if period=="daily":
+    daily_expenses = []
+    for daily_expense_tup in daily_expenses_tuple_list:
+      daily_expenses.append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
+    return daily_expenses
+  if period=="dailyMonthWise":
+    daily_monthwise_expenses = {}
+    for daily_expense_tup in daily_expenses_tuple_list:
+      monthName = daily_expense_tup.expense_date.strftime("%B")
+      monthNumber = daily_expense_tup.expense_date.month
+      monthKey = str(monthNumber) + ":"+monthName
+      monthList = daily_monthwise_expenses.get(monthKey,None)
+      if monthList == None:
+        daily_monthwise_expenses[monthKey] = []
+        monthList = daily_monthwise_expenses[monthKey]
+      monthList.append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
+    output = []
+    for dmwe in sorted(daily_monthwise_expenses):
+      obj = {"key": dmwe.split(":")[1], "values": daily_monthwise_expenses[dmwe]}
+      output.append(obj)
+    return output
+
+
 
 def get_expense_aggregates_for_classification(classificationType):
     if classificationType=="category":
@@ -77,4 +104,3 @@ def get_expense_aggregates_for_classification(classificationType):
         for subcat_expense_tup in subcategory_expenses_tuple_list:
             subcat_expenses.append(_convert_to_json_friendly_exp_classication(subcat_expense_tup,"subcategory"))
         return subcat_expenses
-

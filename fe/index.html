@@ -67,6 +67,31 @@
       </div>
     </div>
 
+
+    <div ng-controller="ExpenseAggregatesMWCtrl" class="row">
+      <div class="col-md-8" id="expense-daily-aggregate-mw-graphs" ng-repeat="chartmw in dailyChartDataMWAll">
+        <nvd3-discrete-bar-chart
+          data="[chartmw]"
+          showXAxis="true"
+          showYAxis="true"
+          showLegend="true"
+          height="160"
+          tooltips="true"
+          tooltipcontent="toolTipContentFunction()"
+          color="colorFunction()"
+          xAxisTickFormat="xAxisTickFormatFunction()"
+          x="xFunction()"
+          >
+            <svg></svg>
+        </nvd3-discrete-bar-chart>
+      </div>
+    </div>
+
+
+
+
+
+
     <div ng-controller="ExpenseCategoryClassificationCtrl" class="row">
       <div class="col-md-8" id="expense-category-classifcation-graphs">
         <nvd3-pie-chart
