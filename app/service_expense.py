@@ -17,7 +17,12 @@ from app.api_inputs import to_date
 from app.model_expense import to_dict
 from app.api_inputs import to_str_from_datetime
 import datetime
+import statistics as stats
 from dateutil.relativedelta import *
+
+FORMATTED_OUTPUT_KEY = "formatted_output"
+DAILY_EXPENSE_VALUES_KEY = "daily_expense_values"
+
 
 
 def _convert_to_json_friendly_exp_agg(exp_aggr_tuple):
@@ -64,26 +69,64 @@ def get_expense_aggregates(period):
     Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(Expense.expense_date>=st_date).group_by(
       Expense.expense_date).order_by(Expense.expense_date).all()
   if period=="daily":
-    daily_expenses = []
-    for daily_expense_tup in daily_expenses_tuple_list:
-      daily_expenses.append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
-    return daily_expenses
+    return calc_daily_expense_aggregates(daily_expenses_tuple_list)
   if period=="dailyMonthWise":
-    daily_monthwise_expenses = {}
-    for daily_expense_tup in daily_expenses_tuple_list:
-      monthName = daily_expense_tup.expense_date.strftime("%B")
-      monthNumber = daily_expense_tup.expense_date.month
-      monthKey = str(monthNumber) + ":"+monthName
-      monthList = daily_monthwise_expenses.get(monthKey,None)
-      if monthList == None:
-        daily_monthwise_expenses[monthKey] = []
-        monthList = daily_monthwise_expenses[monthKey]
-      monthList.append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
-    output = []
-    for dmwe in sorted(daily_monthwise_expenses):
-      obj = {"key": dmwe.split(":")[1], "values": daily_monthwise_expenses[dmwe]}
-      output.append(obj)
-    return output
+    return calc_daily_expense_aggregates_month_wise(daily_expenses_tuple_list)
+
+def calc_daily_expense_aggregates(daily_expenses_tuple_list):
+  daily_expenses_output = []
+  daily_expense_values = []
+  for daily_expense_tup in daily_expenses_tuple_list:
+    daily_expenses_output.append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
+    daily_expense_values.append(daily_expense_tup.daily_expense)
+
+  summary = _calc_summary_obj(daily_expense_values)
+  return daily_expenses_output, summary
+
+def calc_daily_expense_aggregates_month_wise(daily_expenses_tuple_list):
+  daily_monthwise_expenses = _convert_daily_expense_to_month_wise(daily_expenses_tuple_list)
+  output = []
+  summaries = []
+  for month_key in sorted(daily_monthwise_expenses):
+    monthly_data_output = {"key": month_key.split(":")[1], "values": daily_monthwise_expenses[month_key][FORMATTED_OUTPUT_KEY]}
+    output.append(monthly_data_output)
+    summaries.append({"month": month_key.split(":")[1], "summary": _calc_summary_obj(daily_monthwise_expenses[month_key][DAILY_EXPENSE_VALUES_KEY])})
+
+
+  # daily_expense_values = month_value["daily_expense_values"]
+  return output, summaries
+
+def _calc_summary_obj(daily_expense_values_for_a_month):
+  # NOTE: Works with 3.4 stats package. Might not work for 2.7
+  summary = {}
+  summary["Mean"] = "{0:.2f}".format(stats.mean(daily_expense_values_for_a_month))
+  summary["Total"] = "{0:.2f}".format(sum(daily_expense_values_for_a_month))
+  summary["Median"] = "{0:.2f}".format(stats.median(daily_expense_values_for_a_month))
+  summary["Maximum"] = "{0:.2f}".format(max(daily_expense_values_for_a_month))
+  summary["Minimum"] = "{0:.2f}".format(min(daily_expense_values_for_a_month))
+  return summary
+
+def _convert_daily_expense_to_month_wise(daily_expenses_tuple_list):
+
+  daily_monthwise_expenses = {}
+
+  def _get_month_value():
+    month_value = daily_monthwise_expenses.get(month_key,None)
+    if month_value == None:
+      daily_monthwise_expenses[month_key] = {FORMATTED_OUTPUT_KEY:[],DAILY_EXPENSE_VALUES_KEY:[]}
+      month_value = daily_monthwise_expenses[month_key]
+    return month_value
+
+  for daily_expense_tup in daily_expenses_tuple_list:
+    month_key = _calc_month_key(daily_expense_tup)
+    month_value = _get_month_value()
+    month_value[FORMATTED_OUTPUT_KEY].append(_convert_to_json_friendly_exp_agg(daily_expense_tup))
+    month_value[DAILY_EXPENSE_VALUES_KEY].append(daily_expense_tup.daily_expense)
+  return daily_monthwise_expenses
+
+def _calc_month_key(daily_expense_tup):
+  """Creates a month key which has month number in front so that it can be sorted in ascending order of month"""
+  return str(daily_expense_tup.expense_date.month) + ":"+daily_expense_tup.expense_date.strftime("%B")
 
 
 

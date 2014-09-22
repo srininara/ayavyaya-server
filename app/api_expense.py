@@ -24,9 +24,9 @@ class ExpenseAPI(Resource):
 
 class ExpenseAggregatesAPI(Resource):
   def get(self, period):
-    output = ex_sv.get_expense_aggregates(period)
-#     print(output)
-    return {period:output}, 200
+    summary_key = period+"Summary"
+    output,summaries = ex_sv.get_expense_aggregates(period)
+    return {period:output,summary_key:summaries}, 200
 
 class ClassifiedExpensesAPI(Resource):
   def get(self, classificationType):

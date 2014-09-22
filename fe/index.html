@@ -68,29 +68,40 @@
     </div>
 
 
-    <div ng-controller="ExpenseAggregatesMWCtrl" class="row">
-      <div class="col-md-8" id="expense-daily-aggregate-mw-graphs" ng-repeat="chartmw in dailyChartDataMWAll">
-        <nvd3-discrete-bar-chart
-          data="[chartmw]"
-          showXAxis="true"
-          showYAxis="true"
-          showLegend="true"
-          height="160"
-          tooltips="true"
-          tooltipcontent="toolTipContentFunction()"
-          color="colorFunction()"
-          xAxisTickFormat="xAxisTickFormatFunction()"
-          x="xFunction()"
-          >
-            <svg></svg>
-        </nvd3-discrete-bar-chart>
+    <div ng-controller="ExpenseAggregatesMWCtrl">
+      <div class="row">
+        <div class="col-md-6" id="expense-daily-aggregate-mw-graphs" ng-repeat="chartmw in dailyChartDataMWAll">
+          <nvd3-discrete-bar-chart
+            data="[chartmw]"
+            showXAxis="true"
+            showYAxis="true"
+            showLegend="true"
+            height="160"
+            tooltips="true"
+            tooltipcontent="toolTipContentFunction()"
+            color="colorFunction()"
+            xAxisTickFormat="xAxisTickFormatFunction()"
+            x="xFunction()"
+            >
+              <svg></svg>
+          </nvd3-discrete-bar-chart>
+        </div>
+      </div>
+      <div class="row">
+        <div class=col-md-2 id="expense-daily-aggregate-mw-summary" ng-repeat="summary in dailyChartDataMWSummary">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{summary.month}}</h3>
+            </div>
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="(key,value) in summary.summary">
+                <span class="badge">{{value}}</span>{{key}}
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
-
-
-
-
-
 
     <div ng-controller="ExpenseCategoryClassificationCtrl" class="row">
       <div class="col-md-8" id="expense-category-classifcation-graphs">
