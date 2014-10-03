@@ -133,6 +133,31 @@ app.controller('ExpenseCategoryClassificationCtrl',['$scope','ExpenseClassificat
 }]);
 
 
+app.controller('ExpenseCategoryClassificationCtrlMW',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  ExpenseClassificationService.getList("category",{"split":"month"}).then(function(data) {
+    $scope.categoryChartData = data;//[{key: "Daily Aggregates",values: data}];
+  });
+  $scope.xAxisTickFormatFunction = function() {
+    return function(input) {
+      if (typeof(input)==="number" && Math.floor(input)==input) {
+        return months[input-1];
+      } else {
+        return "";
+      }
+    }
+  };
+
+  $scope.toolTipContentFunction = function(){
+  	return function(key, x, y, e, graph) {
+      	return  '<h3>' + key + '</h3>' +
+                  '<p>' +  y + ' in ' + months[e.point[0]-1] + '</p>'
+  	}
+  };
+
+}]);
+
+
 app.controller('ExpenseSubcategoryClassificationCtrl',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
   ExpenseClassificationService.getList("subcategory").then(function(data) {
     $scope.subcategoryChartData = data;//[{key: "Daily Aggregates",values: data}];

@@ -11,11 +11,13 @@ from app.model_expense_category import Expense_Category
 from app.model_expense_category import expense_category_from_dict
 from app.model_expense_subcategory import Expense_Subcategory
 from app.model_expense_subcategory import expense_subcategory_from_dict
+import app.service_expense_classification_category as excc_sv
 
 
-from app.api_inputs import to_date
+from app.date_utils import to_date
 from app.model_expense import to_dict
-from app.api_inputs import to_str_from_datetime
+from app.date_utils import to_str_from_datetime
+from app.date_utils import calc_month_key
 import datetime
 import statistics as stats
 from dateutil.relativedelta import *
@@ -62,16 +64,6 @@ def add_expense(expense_dict):
   db.session.add(expense)
   db.session.commit()
   return to_dict(expense)
-
-def get_expense_aggregates(period):
-  st_date = _get_start_date(-4)
-  daily_expenses_tuple_list = db.session.query(
-    Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(Expense.expense_date>=st_date).group_by(
-      Expense.expense_date).order_by(Expense.expense_date).all()
-  if period=="daily":
-    return calc_daily_expense_aggregates(daily_expenses_tuple_list)
-  if period=="dailyMonthWise":
-    return calc_daily_expense_aggregates_month_wise(daily_expenses_tuple_list)
 
 def calc_daily_expense_aggregates(daily_expenses_tuple_list):
   daily_expenses_output = []
@@ -126,24 +118,36 @@ def _convert_daily_expense_to_month_wise(daily_expenses_tuple_list):
 
 def _calc_month_key(daily_expense_tup):
   """Creates a month key which has month number in front so that it can be sorted in ascending order of month"""
-  return str(daily_expense_tup.expense_date.month) + ":"+daily_expense_tup.expense_date.strftime("%B")
+  return calc_month_key(daily_expense_tup.expense_date)
 
-
+def get_expense_aggregates(period):
+  st_date = _get_start_date(-4)
+  daily_expenses_tuple_list = db.session.query(
+    Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(Expense.expense_date>=st_date).group_by(
+      Expense.expense_date).order_by(Expense.expense_date).all()
+  if period=="daily":
+    return calc_daily_expense_aggregates(daily_expenses_tuple_list)
+  if period=="dailyMonthWise":
+    return calc_daily_expense_aggregates_month_wise(daily_expenses_tuple_list)
 
 def get_expense_aggregates_for_classification(classificationType):
-    if classificationType=="category":
-        category_expenses_tuple_list = db.session.query(
-            Expense_Category.name.label("category"), db.func.sum(Expense.amount).label("category_expenses")).join(Expense).group_by(
-                Expense_Category.id).order_by(db.desc("category_expenses")).all()
-        cat_expenses = []
-        for cat_expense_tup in category_expenses_tuple_list:
-            cat_expenses.append(_convert_to_json_friendly_exp_classication(cat_expense_tup,"category"))
-        return cat_expenses
-    elif classificationType=="subcategory":
-        subcategory_expenses_tuple_list = db.session.query(
-            Expense_Subcategory.name.label("subcategory"), db.func.sum(Expense.amount).label("subcategory_expenses")).join(Expense).group_by(
-                Expense_Subcategory.id).order_by(db.desc("subcategory_expenses")).all()
-        subcat_expenses = []
-        for subcat_expense_tup in subcategory_expenses_tuple_list:
-            subcat_expenses.append(_convert_to_json_friendly_exp_classication(subcat_expense_tup,"subcategory"))
-        return subcat_expenses
+  if classificationType=="category":
+      category_expenses_tuple_list = db.session.query(
+          Expense_Category.name.label("category"), db.func.sum(Expense.amount).label("category_expenses")).join(Expense).group_by(
+              Expense_Category.id).order_by(db.desc("category_expenses")).all()
+      cat_expenses = []
+      for cat_expense_tup in category_expenses_tuple_list:
+          cat_expenses.append(_convert_to_json_friendly_exp_classication(cat_expense_tup,"category"))
+      return cat_expenses
+  elif classificationType=="subcategory":
+      subcategory_expenses_tuple_list = db.session.query(
+          Expense_Subcategory.name.label("subcategory"), db.func.sum(Expense.amount).label("subcategory_expenses")).join(Expense).group_by(
+              Expense_Subcategory.id).order_by(db.desc("subcategory_expenses")).all()
+      subcat_expenses = []
+      for subcat_expense_tup in subcategory_expenses_tuple_list:
+          subcat_expenses.append(_convert_to_json_friendly_exp_classication(subcat_expense_tup,"subcategory"))
+      return subcat_expenses
+
+def get_expense_aggregates_for_classification_with_split(classificationType, split):
+  if classificationType=="category":
+    return excc_sv.get(split)

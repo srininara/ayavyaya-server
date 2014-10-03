@@ -1,6 +1,6 @@
 from app import db
-from app.api_inputs import to_date
-from app.api_inputs import to_str_from_datetime
+from app.date_utils import to_date
+from app.date_utils import to_str_from_datetime
 from app.model_tag import tags
 from app.model_tag import to_dict as tag_as_dict
 from app.model_expense_nature import to_dict as nature_as_dict

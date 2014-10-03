@@ -21,6 +21,7 @@ from app import model_expense
 from app import app_fe
 from app import model_tag
 from app import service_expense
+from app import service_expense_classification_category
 from app import model_expense_category
 from app import model_expense_subcategory
 from app import model_expense_nature

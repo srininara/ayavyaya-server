@@ -136,6 +136,61 @@
     </div>
 
 
+    <div ng-controller="ExpenseCategoryClassificationCtrlMW" class="row">
+      <div class="col-md-10" id="expense-category-classifcation-graphs-mw">
+        <nvd3-line-chart
+    	    data="categoryChartData"
+          id="expense-category-classifcation-mw-graph"
+          height="600"
+          tooltips="true"
+          interactive="true"
+          staggerLabels="true"
+          showLegend="true"
+          showXAxis="true"
+          showYAxis="true"
+          tooltipcontent="toolTipContentFunction()"
+          xAxisTickFormat="xAxisTickFormatFunction()"
+          >
+        	<svg></svg>
+        </nvd3-line-chart>
+      </div>
+    </div>
+
+    <!-- <div ng-controller="ExpenseCategoryClassificationCtrlMW" class="row">
+      <div class="col-md-10" id="expense-category-classifcation-graphs-mw">
+        <nvd3-multi-bar-chart
+          data="categoryChartData"
+          id="expense-category-classifcation-mw-graph"
+          height="600"
+          tooltips="true"
+          staggerLabels="true"
+          showLegend="true"
+          showXAxis="true"
+          showYAxis="true"
+          >
+          <svg></svg>
+        </nvd3-multi-bar-chart>
+      </div>
+    </div> -->
+
+    <!-- <div ng-controller="ExpenseCategoryClassificationCtrlMW" class="row">
+      <div class="col-md-12" id="expense-category-classifcation-graphs-mw">
+        <nvd3-multi-bar-horizontal-chart
+          data="categoryChartData"
+          id="expense-category-classifcation-mw-graph"
+          height="600"
+          tooltips="true"
+          staggerLabels="true"
+          showLegend="true"
+          showXAxis="true"
+          showYAxis="true"
+          rotateLabels="90"
+          >
+          <svg></svg>
+        </nvd3-multi-bar-horizontal-chart>
+      </div> -->
+    </div>
+
   </div>
 
   <!-- Minified versions-->

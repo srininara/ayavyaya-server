@@ -30,7 +30,13 @@ class ExpenseAggregatesAPI(Resource):
 
 class ClassifiedExpensesAPI(Resource):
   def get(self, classificationType):
-    output = ex_sv.get_expense_aggregates_for_classification(classificationType)
+    split = request.args.get('split')
+    if split:
+      print(split)
+      output = ex_sv.get_expense_aggregates_for_classification_with_split(classificationType, split)
+    else:
+      print(split)
+      output = ex_sv.get_expense_aggregates_for_classification(classificationType)
     return {classificationType:output}, 200
 
 api.add_resource(ExpenseListAPI, '/grihasthi/api/v1.0/expenses', endpoint='expenses')

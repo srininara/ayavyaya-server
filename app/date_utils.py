@@ -9,3 +9,6 @@ def to_date(value):
 def to_str_from_datetime(value):
     dateStr = value.strftime("%Y-%m-%d")
     return dateStr
+
+def calc_month_key(some_date):
+  return str(some_date.month) + ":"+some_date.strftime("%B")
