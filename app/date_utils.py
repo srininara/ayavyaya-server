@@ -11,4 +11,4 @@ def to_str_from_datetime(value):
     return dateStr
 
 def calc_month_key(some_date):
-  return str(some_date.month) + ":"+some_date.strftime("%B")
+  return some_date.strftime("%m") + ":"+some_date.strftime("%B") + ":"+some_date.strftime("%Y")

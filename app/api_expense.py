@@ -39,7 +39,12 @@ class ClassifiedExpensesAPI(Resource):
       output = ex_sv.get_expense_aggregates_for_classification(classificationType)
     return {classificationType:output}, 200
 
+# class NatureOfExpenseAPI(Resource):
+#   def get(self):
+#     return {"nature": ex_sv.get_expense_aggregates_for_nature_with_split()}
+
 api.add_resource(ExpenseListAPI, '/grihasthi/api/v1.0/expenses', endpoint='expenses')
 api.add_resource(ExpenseAPI, '/grihasthi/api/v1.0/expenses/<int:id>', endpoint='expense')
 api.add_resource(ExpenseAggregatesAPI, '/grihasthi/api/v1.0/expenseAggregates/<string:period>', endpoint='expenseAggregates')
 api.add_resource(ClassifiedExpensesAPI, '/grihasthi/api/v1.0/expenseClassification/<string:classificationType>', endpoint='expenseClassification')
+# api.add_resource(NatureOfExpenseAPI, '/grihasthi/api/v1.0/expenseNature', endpoint='expenseNature')

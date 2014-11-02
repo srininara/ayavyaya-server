@@ -61,9 +61,6 @@ app.controller('ExpenseAggregatesMWCtrl',['$scope','ExpenseAggregateService', fu
   ExpenseAggregateService.getList("dailyMonthWise").then(function(data) {
     $scope.dailyChartDataMWAll = data;
     $scope.dailyChartDataMWSummary = data.summary;
-    // console.log($scope.dailyChartDataMWSummary);
-
-//    $scope.dailyChartData = [{key: "Daily Aggregates",values: data}];
   });
 
   var colorCategory = ["green", "blue", "orange", "red"];
@@ -153,6 +150,55 @@ app.controller('ExpenseCategoryClassificationCtrlMW',['$scope','ExpenseClassific
       	return  '<h3>' + key + '</h3>' +
                   '<p>' +  y + ' in ' + months[e.point[0]-1] + '</p>'
   	}
+  };
+
+}]);
+
+
+app.controller('ExpenseNatureClassificationCtrlMW',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  ExpenseClassificationService.getList("nature",{"split":"month"}).then(function(data) {
+    $scope.natureChartData = data;//[{key: "Daily Aggregates",values: data}];
+  });
+  $scope.xAxisTickFormatFunction = function() {
+    return function(input) {
+      if (typeof(input)==="number" && Math.floor(input)==input) {
+        return months[input-1];
+      } else {
+        return "";
+      }
+    }
+  };
+
+  $scope.toolTipContentFunction = function(){
+    return function(key, x, y, e, graph) {
+        return  '<h3>' + key + '</h3>' +
+                  '<p>' +  y + ' in ' + months[e.point[0]-1] + '</p>'
+    }
+  };
+
+}]);
+
+app.controller('ExpenseFrequencyClassificationCtrlMW',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  ExpenseClassificationService.getList("frequency",{"split":"month"}).then(function(data) {
+    $scope.frequencyChartData = data;//[{key: "Daily Aggregates",values: data}];
+  });
+  $scope.xAxisTickFormatFunction = function() {
+    return function(input) {
+      if (typeof(input)==="number" && Math.floor(input)==input) {
+        return months[input-1];
+      } else {
+        return "";
+      }
+    }
+  };
+
+  $scope.toolTipContentFunction = function(){
+    return function(key, x, y, e, graph) {
+        return  '<h3>' + key + '</h3>' +
+                  '<p>' +  y + ' in ' + months[e.point[0]-1] + '</p>'
+    }
   };
 
 }]);

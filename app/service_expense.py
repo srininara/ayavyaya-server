@@ -12,7 +12,8 @@ from app.model_expense_category import expense_category_from_dict
 from app.model_expense_subcategory import Expense_Subcategory
 from app.model_expense_subcategory import expense_subcategory_from_dict
 import app.service_expense_classification_category as excc_sv
-
+import app.service_expense_classification_nature as excn_sv
+import app.service_expense_classification_frequency as excf_sv
 
 from app.date_utils import to_date
 from app.model_expense import to_dict
@@ -121,7 +122,7 @@ def _calc_month_key(daily_expense_tup):
   return calc_month_key(daily_expense_tup.expense_date)
 
 def get_expense_aggregates(period):
-  st_date = _get_start_date(-4)
+  st_date = _get_start_date(-6)
   daily_expenses_tuple_list = db.session.query(
     Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(Expense.expense_date>=st_date).group_by(
       Expense.expense_date).order_by(Expense.expense_date).all()
@@ -151,3 +152,7 @@ def get_expense_aggregates_for_classification(classificationType):
 def get_expense_aggregates_for_classification_with_split(classificationType, split):
   if classificationType=="category":
     return excc_sv.get(split)
+  elif classificationType=="nature":
+    return excn_sv.get()
+  elif classificationType=="frequency":
+    return excf_sv.get()
