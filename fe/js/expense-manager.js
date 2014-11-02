@@ -104,32 +104,6 @@ app.controller('ExpenseAggregatesMWCtrl',['$scope','ExpenseAggregateService', fu
 
 
 
-app.controller('ExpenseCategoryClassificationCtrl',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
-  ExpenseClassificationService.getList("category").then(function(data) {
-    $scope.categoryChartData = data;//[{key: "Daily Aggregates",values: data}];
-  });
-
-  $scope.xFunction = function(){
-    return function(d) {
-        return d.category_name;
-    };
-  }
-
-  $scope.yFunction = function(){
-    return function(d){
-      return d.category_expenses;
-    };
-  }
-
-  $scope.$on('elementMouseover.tooltip.directive', function(angularEvent, event){
-    console.log("rr");  // TODO: Here is where we will launch a mechanism to show sub categories
-  });
-
-
-
-}]);
-
-
 app.controller('ExpenseCategoryClassificationCtrlMW',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   ExpenseClassificationService.getList("category",{"split":"month"}).then(function(data) {
@@ -200,32 +174,6 @@ app.controller('ExpenseFrequencyClassificationCtrlMW',['$scope','ExpenseClassifi
                   '<p>' +  y + ' in ' + months[e.point[0]-1] + '</p>'
     }
   };
-
-}]);
-
-
-app.controller('ExpenseSubcategoryClassificationCtrl',['$scope','ExpenseClassificationService', function($scope, ExpenseClassificationService) {
-  ExpenseClassificationService.getList("subcategory").then(function(data) {
-    $scope.subcategoryChartData = data;//[{key: "Daily Aggregates",values: data}];
-  });
-
-  $scope.xFunction = function(){
-    return function(d) {
-        return d.subcategory_name;
-    };
-  }
-
-  $scope.yFunction = function(){
-    return function(d){
-      return d.subcategory_expenses;
-    };
-  }
-
-  $scope.$on('elementMouseover.tooltip.directive', function(angularEvent, event){
-    console.log("rr");  // TODO: Here is where we will launch a mechanism to show sub categories
-  });
-
-
 
 }]);
 
