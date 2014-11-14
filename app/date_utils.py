@@ -1,4 +1,6 @@
 from datetime import datetime
+
+
 def to_date(value):
     """Parse a valid looking date in the format YYYY-mm-dd"""
     date = datetime.strptime(value, "%Y-%m-%d")
@@ -6,9 +8,11 @@ def to_date(value):
         raise ValueError(u"Year must be >= 1900")
     return date
 
+
 def to_str_from_datetime(value):
     dateStr = value.strftime("%Y-%m-%d")
     return dateStr
 
+
 def calc_month_key(some_date):
-  return some_date.strftime("%m") + ":"+some_date.strftime("%B") + ":"+some_date.strftime("%Y")
+    return some_date.strftime("%m") + ":" + some_date.strftime("%B") + ":" + some_date.strftime("%Y")

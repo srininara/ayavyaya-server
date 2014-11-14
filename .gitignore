@@ -9,3 +9,4 @@ db_loader/*.csv
 logfile
 analysis/
 .pydevproject
+.idea/

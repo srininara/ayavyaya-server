@@ -1,12 +1,14 @@
 import os
+
 from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
+
 from flask.ext.restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
-import simplejson
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-STATIC_DIR = BASE_DIR+'/fe/'
+STATIC_DIR = BASE_DIR + '/fe/'
 app = Flask(__name__, static_url_path='', static_folder=STATIC_DIR)
 app.config.from_object('config')
 
