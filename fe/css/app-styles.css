@@ -63,3 +63,26 @@
   color: #262626;
   background-color: #ffff00;
 }
+
+
+.box {
+  font: 10px sans-serif;
+  height: auto;
+}
+
+.box line,
+.box rect,
+.box circle {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.box .center {
+  stroke-dasharray: 3,3;
+}
+
+.box .outlier {
+  fill: none;
+  stroke: #ccc;
+}

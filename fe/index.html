@@ -166,6 +166,19 @@
     </div>
 
 
+    <div ng-controller="ExpenseAggregatesBoxCtrl" class="row">
+      <div class="col-md-12" id="boxAggregatesDiv">
+        <box-chart
+          boxheight="100"
+          boxwidth="700"
+          chartData="myChartData"
+          >
+        </box-chart>
+
+      </div>
+    </div>
+
+
 
   </div>
 
@@ -193,7 +206,8 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.js"></script>
 <script src="http://cdn.jsdelivr.net/angularjs.nvd3-directives/v0.0.7/angularjs-nvd3-directives.js"></script>
 
-
+<script src="js/sbox.js"></script>
 <script src="js/expense-manager.js"></script>
+
 </body>
 </html>

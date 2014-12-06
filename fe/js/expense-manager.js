@@ -219,6 +219,14 @@ app.controller('ExpensesCtrl', ['$scope', '$filter', 'ExpenseService', function(
 
 }]);
 
+app.controller('ExpenseAggregatesBoxCtrl',['$scope','ExpenseAggregateService', function($scope, ExpenseAggregateService) {
+
+
+  ExpenseAggregateService.getList("dailyMonthWiseStat").then(function(data) {
+    $scope.myChartData = data;
+  });
+}]);
+
 app.factory('ExpenseService', ['Restangular', function(Restangular) {
   return Restangular.all('expenses');
 }]);
@@ -230,3 +238,66 @@ app.factory('ExpenseAggregateService', ['Restangular', function(Restangular) {
 app.factory('ExpenseClassificationService', ['Restangular', function(Restangular) {
   return Restangular.one('expenseClassification');
 }]);
+
+app.directive('boxChart',function(){
+  var chart = d3.sbox();
+  return {
+    restrict: 'E',
+    replace: true,
+    template: '<div class="chart"></div>',
+    scope: {
+      boxheight: '@',
+      boxwidth: '@',
+      chartdata: '='
+    },
+    link: function(scope, element, attrs) {
+
+      var chartEls = d3.select(element[0]).selectAll("svg");
+
+      scope.$watch("chartdata", function(newVal) {
+
+        function iqr(k) {
+          return function(d, i) {
+            var q1 = d.quartiles[0],
+              q3 = d.quartiles[2],
+              iqr = (q3 - q1) * k,
+              i = -1,
+              j = d.length;
+            while (d[++i] < q1 - iqr);
+            while (d[--j] > q3 + iqr);
+            return [i, j];
+          };
+        }
+
+        var boxheight = parseInt(attrs.boxheight);
+        var boxwidth = parseInt(attrs.boxwidth);
+
+        var margin = {top: 20, right: 10, bottom: 10, left: 10},
+          width = boxwidth - margin.left - margin.right,
+          height = boxheight - margin.top - margin.bottom;
+
+
+        if(newVal) {
+          var chart = d3.sbox()
+            .whiskers(iqr(1.5))
+            .width(width)
+            .height(height);
+
+          var min = 620,
+            max = 1070;  // TODO: Temporary hardcoding. MUST REMOVE
+
+          chart.domain([min,max]);
+
+          chartEls.data(newVal)
+            .enter().append("svg")
+              .attr("class", "box")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.bottom + margin.top)
+            .append("g")
+              .attr("transform", "translate(" + margin.top + "," + margin.left + ")")
+              .call(chart);
+        }
+      });
+    }
+  }
+});
