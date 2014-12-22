@@ -67,9 +67,15 @@
 
 .box {
   font: 10px sans-serif;
-  height: auto;
-}
+  margin: 10, 0, 10, 0;
+  display: inline;
+/*  width: 200px;*/
+  height: 120px;
 
+}
+.rotate {
+  display: block;
+}
 .box line,
 .box rect,
 .box circle {
@@ -77,12 +83,16 @@
   stroke: #000;
   stroke-width: 1.5px;
 }
-
 .box .center {
-  stroke-dasharray: 3,3;
+  stroke-dasharray: 3, 3;
 }
-
 .box .outlier {
   fill: none;
   stroke: #ccc;
+}
+
+.key {
+  font: 13px sans-serif;
+  font-weight: bold;
+  fill: blue;
 }
