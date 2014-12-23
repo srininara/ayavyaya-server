@@ -14,12 +14,86 @@
 <body>
     <div class="container" ng-app="expensesDashboard">
         <div id="month-daily-stats" ng-controller="MonthDailyStatsCtrl">
-            <div class="col-md-8" id="expense-daily-aggregate-graphs">
-                <nvd3-discrete-bar-chart id="expense-daily-aggregate-graph" data="monthDailyRawData" showXAxis="true" showYAxis="true" showLegend="true" height="400" tooltips="true" tooltipcontent="toolTipContentFunction()" color="colorFunction()" x="xFunction()" y="yFunction()" xAxisTickFormat="xAxisTickFormatFunction()" noData="No Data is available">
-                    <svg></svg>
-                </nvd3-discrete-bar-chart>
-            </div>
+            <div id="month-daily-stats-view" class="row">
+                <div id="change-request" class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Tweak View</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label for="dailyStatsRequestMonth">Month</label>
+                            <slider id="dailyStatsRequestMonth" ng-model="requestedMonth" floor="5" ceiling="12" step="1">
+                            </slider>
+                            <div class="form-group">
+                                <label for="dailyStatsRequestYear">Year</label>
+                                <input id="dailyStatsRequestYear" type="number" class="form-control" ng-model="requestedYear" disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div id="expense-daily-aggregates" class="col-md-9">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Daily Spending</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="expense-daily-aggregate-bar-chart" class="col-md-8">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Day to day comparison</h3>
+                                    </div>
+
+                                    <nvd3-discrete-bar-chart id="expense-daily-aggregate-graph" data="monthDailyRawData" showXAxis="true" showYAxis="true" showLegend="true" height="350" tooltips="true" tooltipcontent="toolTipContentFunction()" color="colorFunction()" x="xFunction()" y="yFunction()" xAxisTickFormat="xAxisTickFormatFunction()" noData="No Data is available">
+                                        <svg></svg>
+                                    </nvd3-discrete-bar-chart>
+                                </div>
+                            </div>
+                            <div id="expense-daily-aggregate-summary" class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Summary</h3>
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <span>Highest</span>
+                                            <span class="label label-danger pull-right">{{monthlySummary.maximum}}</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>Average</span>
+                                            <span class="label label-info pull-right">{{monthlySummary.mean}}</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>Median</span>
+                                            <span class="label label-success pull-right">{{monthlySummary.median}}</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>Total Expenses</span>
+                                            <span class="label label-default pull-right">{{monthlySummary.total}}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="month-category-stats" ng-controller="MonthCategoryStatsCtrl">
+            <div id="month-category-stats-view" class="row">
+                <div id="expense-category-aggregates" class="col-md-9 pull-right">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Category Spending</h3>
+                        </div>
+                        <div class="panel-body">
+                            <nvd3-discrete-bar-chart id="expense-category-aggregate-graph" data="monthCategoryRawData" showXAxis="true" showYAxis="true" showLegend="true" height="350" staggerLabels="true" tooltips="true" x="xFunction()" y="yFunction()" noData="No Data is available">
+                                <svg></svg>
+                            </nvd3-discrete-bar-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -33,7 +107,9 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js "></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.js "></script>
     <script src="http://cdn.jsdelivr.net/angularjs.nvd3-directives/v0.0.7/angularjs-nvd3-directives.js "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.7/angular-touch.min.js"></script>
     <script src="js/expense-dashboard.js"></script>
+    <script src="js/angular-slider.js"></script>
 
 </body>
 

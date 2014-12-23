@@ -1,4 +1,4 @@
-angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDirectives'])
+angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDirectives', 'vr.directives.slider'])
     .config(["RestangularProvider",
         function (RestangularProvider) {
             RestangularProvider.setBaseUrl('/grihasthi/api/v1.0/');
@@ -17,20 +17,53 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 return extractedData;
             });
         }])
+    .controller('MonthCategoryStatsCtrl', ['$scope', 'MonthStatsCategoryService',
+        function ($scope, MonthStatsCategoryService) {
+            function getDataFromService() {
+                MonthStatsCategoryService.get("2014-12").then(function (data) {
+                    $scope.monthCategoryRawData = [{
+                        key: categorySpendChartKey,
+                        values: data.categoryData
+                }];
+                    $scope.monthlySummary = data.summary;
+                });
+            }
+            var xAxisDataVarName = "category";
+            var yAxisDataVarName = "category_expenses";
+            var categorySpendChartKey = "Category Spend";
+            getDataFromService();
+            
+            $scope.xFunction = function () {
+                return function (d) {
+                    return d[xAxisDataVarName];
+                };
+            };
+            $scope.yFunction = function () {
+                return function (d) {
+                    return d[yAxisDataVarName];
+                };
+            };
+
+        }
+    ])
     .controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
         function ($scope, MonthStatsDailyService) {
+            function getDataFromService() {
+                MonthStatsDailyService.get($scope.requestedYear + "-" + $scope.requestedMonth).then(function (data) {
+                    $scope.monthDailyRawData = [{
+                        key: dailySpendChartKey,
+                        values: data.dailyData
+                }];
+                    $scope.monthlySummary = data.summary;
+
+                });
+            }
+
             var xAxisDataVarName = "expense_date";
             var yAxisDataVarName = "daily_expense";
             var dailySpendChartKey = "Daily Spend";
-
-            MonthStatsDailyService.get("2014-12").then(function (data) {
-                $scope.monthDailyRawData = [{
-                    key: dailySpendChartKey,
-                    values: data.dailyData
-                }];
-                $scope.monthlySummary = data.summary;
-
-            });
+            $scope.requestedMonth = new Date().getMonth() + 1;
+            $scope.requestedYear = 2014;
 
             $scope.xFunction = function () {
                 return function (d) {
@@ -48,7 +81,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                     maxKey = "maximum";
                 var color = d3.scale.linear()
                     .domain([$scope.monthlySummary[minKey], $scope.monthlySummary[maxKey]])
-                    .range(["#0000AA", "#AA0000"]);
+                    .range(["#88FF00", "#DD0000"]);
                 return function (d, i) {
                     var y = d[yAxisDataVarName]
                     return color(y);
@@ -72,10 +105,19 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                     return "<p><strong>" + key + "</strong></p><p>Rs. " + y + ' on ' + day + "</p>"
                 };
             };
+
+            $scope.$watch("requestedMonth", function (newVal) {
+                getDataFromService();
+            });
         }
     ])
     .factory('MonthStatsDailyService', ['Restangular',
         function (Restangular) {
             return Restangular.all('monthStatsDaily');
+        }
+    ])
+    .factory('MonthStatsCategoryService', ['Restangular',
+        function (Restangular) {
+            return Restangular.all('monthStatsCategory');
         }
     ]);
