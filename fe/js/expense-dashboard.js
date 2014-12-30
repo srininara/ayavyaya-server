@@ -1,123 +1,152 @@
-angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDirectives', 'vr.directives.slider'])
+angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDirectives'])
     .config(["RestangularProvider",
         function (RestangularProvider) {
+            "use strict";
             RestangularProvider.setBaseUrl('/grihasthi/api/v1.0/');
-            // TODO: Can I remove this interceptor
-            RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
-                var extractedData;
-                // .. to look for getList operations
-                if (operation === "getList") {
-                    // .. and handle the data and meta data
-                    extractedData = data[what];
-                    //                    summaryKey = what + "Summary";
-                    //                    extractedData.summary = data[summaryKey]
-                } else {
-                    extractedData = data;
-                }
-                return extractedData;
-            });
         }])
     .controller('MonthCategoryStatsCtrl', ['$scope', 'MonthStatsCategoryService',
         function ($scope, MonthStatsCategoryService) {
+            "use strict";
+            var xAxisDataVarNameForCat = "category",
+                yAxisDataVarNameForCat = "category_expenses",
+                categorySpendChartKey = "Category Spend",
+                xAxisDataVarNameForSubCat = "sub_category",
+                yAxisDataVarNameForSubCat = "sub_category_expenses";
+
             function getDataFromService() {
                 MonthStatsCategoryService.get("2014-12").then(function (data) {
                     $scope.monthCategoryRawData = [{
                         key: categorySpendChartKey,
                         values: data.categoryData
-                }];
-                    $scope.monthlySummary = data.summary;
+                    }];
+                    $scope.monthSubCategoryRawData = [{
+                        key: data.categoryData[0].category,
+                        values: data.categoryData[0].sub_categories
+                    }];
                 });
             }
-            var xAxisDataVarName = "category";
-            var yAxisDataVarName = "category_expenses";
-            var categorySpendChartKey = "Category Spend";
             getDataFromService();
-            
-            $scope.xFunction = function () {
+
+            $scope.xCatFunction = function () {
                 return function (d) {
-                    return d[xAxisDataVarName];
+                    return d[xAxisDataVarNameForCat];
                 };
             };
-            $scope.yFunction = function () {
+            $scope.yCatFunction = function () {
                 return function (d) {
-                    return d[yAxisDataVarName];
+                    return d[yAxisDataVarNameForCat];
                 };
             };
-
-        }
-    ])
-    .controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
-        function ($scope, MonthStatsDailyService) {
-            function getDataFromService() {
-                MonthStatsDailyService.get($scope.requestedYear + "-" + $scope.requestedMonth).then(function (data) {
-                    $scope.monthDailyRawData = [{
-                        key: dailySpendChartKey,
-                        values: data.dailyData
-                }];
-                    $scope.monthlySummary = data.summary;
-
-                });
-            }
-
-            var xAxisDataVarName = "expense_date";
-            var yAxisDataVarName = "daily_expense";
-            var dailySpendChartKey = "Daily Spend";
-            $scope.requestedMonth = new Date().getMonth() + 1;
-            $scope.requestedYear = 2014;
-
-            $scope.xFunction = function () {
+            $scope.xSubCatFunction = function () {
                 return function (d) {
-                    return d[xAxisDataVarName];
+                    return d[xAxisDataVarNameForSubCat];
                 };
             };
-            $scope.yFunction = function () {
+            $scope.ySubCatFunction = function () {
                 return function (d) {
-                    return d[yAxisDataVarName];
+                    return d[yAxisDataVarNameForSubCat];
                 };
             };
 
-            $scope.colorFunction = function () {
-                var minKey = "minimum",
-                    maxKey = "maximum";
-                var color = d3.scale.linear()
-                    .domain([$scope.monthlySummary[minKey], $scope.monthlySummary[maxKey]])
-                    .range(["#88FF00", "#DD0000"]);
-                return function (d, i) {
-                    var y = d[yAxisDataVarName]
-                    return color(y);
-                };
-            };
-
-            $scope.xAxisTickFormatFunction = function () {
-                var dailyDataXAxisTickInterval = 5;
-                return function (input) {
-                    var dateObj = new Date(input)
-                    var day = d3.time.format('%e')(dateObj);
-                    var day_to_show = d3.time.format('%e-%b')(dateObj);
-                    return (day % dailyDataXAxisTickInterval == 0) ? day_to_show : "";
+            $scope.$on('elementClick.directive', function (angularEvent, event) {
+                var mydata = event.point;
+                if (mydata.category) {
+                    $scope.monthSubCategoryRawData = [{
+                        key: mydata.category,
+                        values: mydata.sub_categories
+                    }];
+                    $scope.$apply();
                 }
-            };
+            });
+        }])
 
-            $scope.toolTipContentFunction = function () {
-                return function (key, x, y, e, graph) {
-                    var dateObj = new Date(e.point[xAxisDataVarName]);
-                    var day = d3.time.format('%e-%b-%Y')(dateObj);
-                    return "<p><strong>" + key + "</strong></p><p>Rs. " + y + ' on ' + day + "</p>"
-                };
-            };
+.controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
+            function ($scope, MonthStatsDailyService) {
+        "use strict";
 
-            $scope.$watch("requestedMonth", function (newVal) {
-                getDataFromService();
+        var xAxisDataVarName = "expense_date",
+            yAxisDataVarName = "daily_expense",
+            dailySpendChartKey = "Daily Spend";
+
+        function getDataFromService() {
+            var monthReq = $scope.requestedMonthYear.getFullYear()+"-"+ ($scope.requestedMonthYear.getMonth() + 1)
+            MonthStatsDailyService.get(monthReq).then(function (data) {
+                $scope.monthDailyRawData = [{
+                    key: dailySpendChartKey,
+                    values: data.dailyData
+                    }];
+                $scope.monthlySummary = data.summary;
             });
         }
+
+        $scope.requestedMonthYear = new Date();
+        $scope.requestedYear = 2014;
+
+        $scope.xFunction = function () {
+            return function (d) {
+                return d[xAxisDataVarName];
+            };
+        };
+        $scope.yFunction = function () {
+            return function (d) {
+                return d[yAxisDataVarName];
+            };
+        };
+
+        $scope.colorFunction = function () {
+            var minKey = "minimum",
+                maxKey = "maximum",
+                color = d3.scale.linear()
+                .domain([$scope.monthlySummary[minKey], $scope.monthlySummary[maxKey]])
+                .range(["#88FF00", "#DD0000"]);
+            return function (d, i) {
+                var y = d[yAxisDataVarName];
+                return color(y);
+            };
+        };
+
+        $scope.xAxisTickFormatFunction = function () {
+            var dailyDataXAxisTickInterval = 5;
+            return function (input) {
+                var dateObj = new Date(input),
+                    day = d3.time.format('%e')(dateObj),
+                    day_to_show = d3.time.format('%e-%b')(dateObj);
+                return (day % dailyDataXAxisTickInterval === 0) ? day_to_show : "";
+            };
+        };
+
+        $scope.toolTipContentFunction = function () {
+            return function (key, x, y, e, graph) {
+                var dateObj = new Date(e.point[xAxisDataVarName]),
+                    day = d3.time.format('%e-%b-%Y')(dateObj);
+                return "<p><strong>" + key + "</strong></p><p>Rs. " + y + ' on ' + day + "</p>";
+            };
+        };
+
+        $scope.$watch("requestedMonthYear", function (newVal) {
+            getDataFromService();
+        });
+
+        $scope.openMP = function ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.opened = true;
+        };
+
+        $scope.monthPickerOptions = {
+            minMode: 'month'
+        };
+    }
     ])
     .factory('MonthStatsDailyService', ['Restangular',
         function (Restangular) {
+            "use strict";
             return Restangular.all('monthStatsDaily');
         }
-    ])
+        ])
     .factory('MonthStatsCategoryService', ['Restangular',
         function (Restangular) {
+            "use strict";
             return Restangular.all('monthStatsCategory');
         }
-    ]);
+        ]);
