@@ -8,13 +8,13 @@ import app.month_stats_provider as msp
 class MonthStatsDailyAPI(Resource):
     def get(self, month_identifier):
         output = {}
-        output["dailyData"], output["summary"] = msp.dailyData(month_identifier)
+        output["dailyData"], output["summary"] = msp.daily_data(month_identifier)
         return output, 200
 
 
 class MonthStatsCategoryAPI(Resource):
     def get(self, month_identifier):
-        output = {"categoryData": msp.categoryData(month_identifier)}
+        output = {"categoryData": msp.category_data(month_identifier)}
         return output, 200
 
 

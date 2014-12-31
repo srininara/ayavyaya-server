@@ -27,7 +27,7 @@ def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
     return summary
 
 
-def dailyData(month_identifier):
+def daily_data(month_identifier):
     start_date = to_first_day_from_mth_str(month_identifier)
     end_date = add_a_month_to(start_date)
     daily_expenses_tuple_list = db.session.query(
@@ -40,7 +40,7 @@ def dailyData(month_identifier):
     return daily_values, summary
 
 
-def categoryData(month_identifier):
+def category_data(month_identifier):
     start_date = to_first_day_from_mth_str(month_identifier)
     end_date = add_a_month_to(start_date)
 
@@ -55,11 +55,11 @@ def categoryData(month_identifier):
 
     output = []
     for category in sorted(exp_list_grouped_by_category):
-        category_data = exp_list_grouped_by_category[category]
+        category_raw_data = exp_list_grouped_by_category[category]
         category_rec = {"category": category, "category_expenses": float(ft.reduce(lambda exp, tup: exp + tup[0],
-                                                                                   category_data, 0)),
+                                                                                   category_raw_data, 0)),
                         "sub_categories": []}
-        cat_exp_list_grouped_by_sub_category = itz.groupby(lambda tup: tup[2], category_data)
+        cat_exp_list_grouped_by_sub_category = itz.groupby(lambda tup: tup[2], category_raw_data)
         for sub_category in sorted(cat_exp_list_grouped_by_sub_category):
             sub_category_data = cat_exp_list_grouped_by_sub_category[sub_category]
             sub_category_rec = {"sub_category": sub_category,
@@ -69,19 +69,4 @@ def categoryData(month_identifier):
             output.append(category_rec)
 
     return output
-
-
-# def categoryData(month_identifier):
-# start_date = to_first_day_from_mth_str(month_identifier)
-# end_date = add_a_month_to(start_date)
-#
-# category_expenses_tuple_list = db.session.query(
-# Expense_Category.name.label("category"),
-# db.func.sum(Expense.amount).label("category_expenses")).join(Expense).filter(
-# Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
-# Expense_Category.id).order_by(db.asc("category")).all()
-# category_values = [{"category": category, "category_expenses": float(category_expenses)} for
-#                        category, category_expenses in category_expenses_tuple_list]
-#     summary = []
-#     return category_values, summary
 

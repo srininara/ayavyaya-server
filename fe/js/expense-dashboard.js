@@ -4,6 +4,25 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             "use strict";
             RestangularProvider.setBaseUrl('/grihasthi/api/v1.0/');
         }])
+    .controller('MonthStatsCtrl', ['$scope',
+        function ($scope) {
+            $scope.$watch("requestedMonthYear", function (newVal) {
+                $scope.$broadcast("monthChanged", $scope.requestedMonthYear);
+            });
+
+            $scope.openMP = function ($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.opened = true;
+            };
+
+            $scope.monthPickerOptions = {
+                minMode: 'month'
+            };
+            $scope.requestedMonthYear = new Date();
+
+        }
+    ])
     .controller('MonthCategoryStatsCtrl', ['$scope', 'MonthStatsCategoryService',
         function ($scope, MonthStatsCategoryService) {
             "use strict";
@@ -13,8 +32,9 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 xAxisDataVarNameForSubCat = "sub_category",
                 yAxisDataVarNameForSubCat = "sub_category_expenses";
 
-            function getDataFromService() {
-                MonthStatsCategoryService.get("2014-12").then(function (data) {
+            function getDataFromService(requestedDate) {
+                var monthReq = requestedDate.getFullYear() + "-" + (requestedDate.getMonth() + 1)
+                MonthStatsCategoryService.get(monthReq).then(function (data) {
                     $scope.monthCategoryRawData = [{
                         key: categorySpendChartKey,
                         values: data.categoryData
@@ -25,7 +45,6 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                     }];
                 });
             }
-            getDataFromService();
 
             $scope.xCatFunction = function () {
                 return function (d) {
@@ -48,6 +67,12 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 };
             };
 
+            $scope.$on('monthChanged', function (event, reqDate) {
+                console.log("here we are in MonthCategoryStatsCtrl");
+                getDataFromService(reqDate);
+
+            });
+
             $scope.$on('elementClick.directive', function (angularEvent, event) {
                 var mydata = event.point;
                 if (mydata.category) {
@@ -60,7 +85,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             });
         }])
 
-.controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
+    .controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
             function ($scope, MonthStatsDailyService) {
         "use strict";
 
@@ -68,8 +93,9 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             yAxisDataVarName = "daily_expense",
             dailySpendChartKey = "Daily Spend";
 
-        function getDataFromService() {
-            var monthReq = $scope.requestedMonthYear.getFullYear()+"-"+ ($scope.requestedMonthYear.getMonth() + 1)
+        function getDataFromService(requestedDate) {
+
+            var monthReq = requestedDate.getFullYear() + "-" + (requestedDate.getMonth() + 1)
             MonthStatsDailyService.get(monthReq).then(function (data) {
                 $scope.monthDailyRawData = [{
                     key: dailySpendChartKey,
@@ -79,8 +105,6 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             });
         }
 
-        $scope.requestedMonthYear = new Date();
-        $scope.requestedYear = 2014;
 
         $scope.xFunction = function () {
             return function (d) {
@@ -123,8 +147,9 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             };
         };
 
-        $scope.$watch("requestedMonthYear", function (newVal) {
-            getDataFromService();
+        $scope.$on('monthChanged', function (event, reqDate) {
+            console.log("here we are in MonthDailyStatsCtrl");
+            getDataFromService(reqDate);
         });
 
         $scope.openMP = function ($event) {
@@ -149,4 +174,4 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             "use strict";
             return Restangular.all('monthStatsCategory');
         }
-        ]);
+    ]);
