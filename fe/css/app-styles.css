@@ -58,6 +58,9 @@
     color: #262626;
     background-color: #ffff00;
 }
+body {
+    padding-top: 70px;
+}
 .box {
     font: 10px sans-serif;
     margin: 10, 0, 10, 0;

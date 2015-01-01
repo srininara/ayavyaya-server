@@ -23,6 +23,24 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
 
         }
     ])
+    .controller('MonthTopExpensesStatsCtrl', ['$scope', 'MonthStatsTopExpensesService',
+        function ($scope, MonthStatsTopExpensesService) {
+            "use strict";
+            
+            function getDataFromService(requestedDate) {
+                var monthReq = requestedDate.getFullYear() + "-" + (requestedDate.getMonth() + 1)
+                MonthStatsTopExpensesService.get(monthReq).then(function (data) {
+                    $scope.topExpensesByValue = data.topExpensesByValue;
+                    $scope.topExpensesByFrequency = data.topExpensesByFrequency;
+                });
+            }
+
+            $scope.$on('monthChanged', function (event, reqDate) {
+                getDataFromService(reqDate);
+            });
+
+        }
+    ])
     .controller('MonthCategoryStatsCtrl', ['$scope', 'MonthStatsCategoryService',
         function ($scope, MonthStatsCategoryService) {
             "use strict";
@@ -87,7 +105,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             });
         }])
 
-    .controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
+.controller('MonthDailyStatsCtrl', ['$scope', 'MonthStatsDailyService',
             function ($scope, MonthStatsDailyService) {
         "use strict";
 
@@ -98,7 +116,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
         function getDataFromService(requestedDate) {
             var monthReq = requestedDate.getFullYear() + "-" + (requestedDate.getMonth() + 1)
             MonthStatsDailyService.get(monthReq).then(function (data) {
-                if (data.dailyData.length>0) {
+                if (data.dailyData.length > 0) {
                     $scope.monthDailyRawData = [{
                         key: dailySpendChartKey,
                         values: data.dailyData
@@ -152,20 +170,16 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 return "<p><strong>" + key + "</strong></p><p>Rs. " + y + ' on ' + day + "</p>";
             };
         };
+                
+        $scope.showSummary = function () {
+            return Object.keys($scope.monthlySummary).length > 0;
+        }
+        
 
         $scope.$on('monthChanged', function (event, reqDate) {
             getDataFromService(reqDate);
         });
 
-        $scope.openMP = function ($event) {
-            $event.preventDefault();
-            $event.stopPropagation();
-            $scope.opened = true;
-        };
-
-        $scope.monthPickerOptions = {
-            minMode: 'month'
-        };
     }
     ])
     .factory('MonthStatsDailyService', ['Restangular',
@@ -178,5 +192,11 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
         function (Restangular) {
             "use strict";
             return Restangular.all('monthStatsCategory');
+        }
+    ])
+    .factory('MonthStatsTopExpensesService', ['Restangular',
+        function (Restangular) {
+            "use strict";
+            return Restangular.all('monthStatsTopExpenses');
         }
     ]);

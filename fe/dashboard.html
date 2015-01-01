@@ -14,8 +14,8 @@
 <body>
     <div class="container" ng-app="expensesDashboard">
         <div ng-controller="MonthStatsCtrl">
-            <div id="month-daily-stats">
-                <nav class="navbar navbar-default">
+            <div id="nav-area">
+                <nav class="navbar navbar-default navbar-fixed-top">
                     <div class="container">
                         <div class="navbar-form">
                             <div class="form-group">
@@ -31,43 +31,40 @@
 
                     </div>
                 </nav>
+            </div>
 
-                <div id="month-daily-stats-view" class="row" ng-controller="MonthDailyStatsCtrl">
-                    <div id="expense-daily-aggregates" class="col-md-9">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Daily Spending</h3>
+            <div id="month-daily-stats-view" class="row" ng-controller="MonthDailyStatsCtrl">
+                <div id="expense-daily-aggregates" class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Daily Spending</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="expense-daily-aggregate-bar-chart" class="col-md-9">
+                                <nvd3-discrete-bar-chart id="expense-daily-aggregate-graph" data="monthDailyRawData" showXAxis="true" showYAxis="true" showLegend="true" height="350" tooltips="true" tooltipcontent="toolTipContentFunction()" color="colorFunction()" x="xFunction()" y="yFunction()" xAxisTickFormat="xAxisTickFormatFunction()" noData="No Data is available">
+                                    <svg></svg>
+                                </nvd3-discrete-bar-chart>
                             </div>
-                            <div class="panel-body">
-                                <div id="expense-daily-aggregate-bar-chart" class="col-md-8">
-                                    <nvd3-discrete-bar-chart id="expense-daily-aggregate-graph" data="monthDailyRawData" showXAxis="true" showYAxis="true" showLegend="true" height="350" tooltips="true" tooltipcontent="toolTipContentFunction()" color="colorFunction()" x="xFunction()" y="yFunction()" xAxisTickFormat="xAxisTickFormatFunction()" noData="No Data is available">
-                                        <svg></svg>
-                                    </nvd3-discrete-bar-chart>
-                                </div>
-                                <div id="expense-daily-aggregate-summary" class="col-md-4">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">Summary</h3>
-                                        </div>
-                                        <ul class="list-group">
-                                            <li class="list-group-item">
-                                                <span>Highest</span>
-                                                <span class="label label-danger pull-right">{{monthlySummary.maximum}}</span>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <span>Average</span>
-                                                <span class="label label-info pull-right">{{monthlySummary.mean}}</span>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <span>Median</span>
-                                                <span class="label label-success pull-right">{{monthlySummary.median}}</span>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <span>Total Expenses</span>
-                                                <span class="label label-default pull-right">{{monthlySummary.total}}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
+                            <div id="expense-daily-aggregate-summary" class="col-md-3">
+                                <div class="panel panel-default" ng-show="showSummary()">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <span>{{monthlySummary.maximum}}</span>
+                                            <span class="label label-danger pull-right">Highest</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>{{monthlySummary.mean}}</span>
+                                            <span class="label label-info pull-right">Average</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>{{monthlySummary.median}}</span>
+                                            <span class="label label-success pull-right">Median</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>{{monthlySummary.total}}</span>
+                                            <span class="label label-default pull-right">Total Expenses</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -76,8 +73,8 @@
             </div>
             <div id="month-category-stats" ng-controller="MonthCategoryStatsCtrl">
                 <div id="month-category-stats-view" class="row">
-                    <div id="expense-category-aggregates" class="col-md-9">
-                        <div class="panel panel-info">
+                    <div id="expense-category-aggregates" class="col-md-12">
+                        <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Category Spending</h3>
                             </div>
@@ -98,23 +95,68 @@
                     </div>
                 </div>
             </div>
+            <div id="month-top-expenses-stats" ng-controller="MonthTopExpensesStatsCtrl">
+                <div id="month-top-expenses-stats-view" class="row">
+                    <div id="top-expenses-by-value" class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Top Expenses By Total Value</h3>
+                            </div>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Total Value</th>
+                                    <th>Expense Description</th>
+                                    <th>Frequency Spread</th>
+                                </tr>
+                                <tr ng-repeat="topExpense in topExpensesByValue">
+                                    <td>{{$index+1}}</td>
+                                    <td class="text-danger">{{topExpense.total_value}}</td>
+                                    <td>{{topExpense.description}}</td>
+                                    <td>{{topExpense.frequency_spread}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="top-expenses-by-frequency" class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Top Expenses By Frequency Spread</h3>
+                            </div>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Frequency Spread</th>
+                                    <th>Expense Description</th>
+                                    <th>Total Value</th>
+                                </tr>
+                                <tr ng-repeat="topExpense in topExpensesByFrequency">
+                                    <td>{{$index+1}}</td>
+                                    <td class="text-danger">{{topExpense.frequency_spread}}</td>
+                                    <td>{{topExpense.description}}</td>
+                                    <td>{{topExpense.total_value}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-    </div>
-
-    <script src=" http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.0.1/ng-tags-input.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js "></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.js "></script>
-<!--    <script src="js/angularjs-nvd3-directives.js"></script>-->
-    <script src="http://cdn.jsdelivr.net/angularjs.nvd3-directives/v0.0.7/angularjs-nvd3-directives.js "></script>
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.7/angular-touch.min.js"></script>-->
-    <script src="js/expense-dashboard.js"></script>
+        <script src=" http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/ng-tags-input/2.0.1/ng-tags-input.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/restangular/1.3.1/restangular.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js "></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.js "></script>
+        <!--    <script src="js/angularjs-nvd3-directives.js"></script>-->
+        <script src="http://cdn.jsdelivr.net/angularjs.nvd3-directives/v0.0.7/angularjs-nvd3-directives.js "></script>
+        <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.7/angular-touch.min.js"></script>-->
+        <script src="js/expense-dashboard.js"></script>
 
 </body>
 

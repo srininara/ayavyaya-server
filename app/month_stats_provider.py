@@ -16,6 +16,12 @@ def _money_format(value):
     return "{0:.2f}".format(value)
 
 
+def _find_start_end_dates(month_identifier):
+    start_date = to_first_day_from_mth_str(month_identifier)
+    end_date = add_a_month_to(start_date)
+    return end_date, start_date
+
+
 def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
     summary = {}
     if daily_expense_values_for_a_month:
@@ -28,10 +34,10 @@ def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
                    "upper_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 75))}
     return summary
 
-def daily_data(month_identifier):
+
+def daily_stats(month_identifier):
     # Behavior note: Even when data for the criteria is not found, the method empty shells
-    start_date = to_first_day_from_mth_str(month_identifier)
-    end_date = add_a_month_to(start_date)
+    end_date, start_date = _find_start_end_dates(month_identifier)
     daily_expenses_tuple_list = db.session.query(
         Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(
         Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
@@ -42,10 +48,9 @@ def daily_data(month_identifier):
     return daily_values, summary
 
 
-def category_data(month_identifier):
+def category_stats(month_identifier):
     # Behavior note: Even when data for the criteria is not found, the method empty shells
-    start_date = to_first_day_from_mth_str(month_identifier)
-    end_date = add_a_month_to(start_date)
+    end_date, start_date = _find_start_end_dates(month_identifier)
 
     exp_list_with_full_category_info = db.session.query(Expense.amount.label("expense"),
                                                         Expense_Category.name.label("category"),
@@ -73,3 +78,25 @@ def category_data(month_identifier):
 
     return output
 
+
+def top_expenses_stats(month_identifier):
+    # Behavior note: Even when data for the criteria is not found, the method empty shells
+    end_date, start_date = _find_start_end_dates(month_identifier)
+    limit_val = 10
+    top_expenses_by_value_raw_list = db.session.query(
+        Expense.description, db.func.sum(Expense.amount).label("expense_amount"),
+        db.func.count(Expense.amount).label("frequency")).filter(
+        Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
+        Expense.description).order_by("expense_amount DESC").limit(limit_val).all()
+    top_expenses_by_value_json_list = [
+        {"description": description, "total_value": float(expense_amount), "frequency_spread": frequency} for
+        description, expense_amount, frequency in top_expenses_by_value_raw_list]
+    top_expenses_by_frequency_raw_list = db.session.query(
+        Expense.description, db.func.sum(Expense.amount).label("expense_amount"),
+        db.func.count(Expense.amount).label("frequency")).filter(
+        Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
+        Expense.description).order_by("frequency DESC").limit(limit_val).all()
+    top_expenses_by_frequency_json_list = [
+        {"description": description, "total_value": float(expense_amount), "frequency_spread": frequency} for
+        description, expense_amount, frequency in top_expenses_by_frequency_raw_list]
+    return top_expenses_by_value_json_list, top_expenses_by_frequency_json_list
