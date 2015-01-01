@@ -35,17 +35,21 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             function getDataFromService(requestedDate) {
                 var monthReq = requestedDate.getFullYear() + "-" + (requestedDate.getMonth() + 1)
                 MonthStatsCategoryService.get(monthReq).then(function (data) {
-                    $scope.monthCategoryRawData = [{
-                        key: categorySpendChartKey,
-                        values: data.categoryData
-                    }];
-                    $scope.monthSubCategoryRawData = [{
-                        key: data.categoryData[0].category,
-                        values: data.categoryData[0].sub_categories
-                    }];
+                    if (data.categoryData.length > 0) {
+                        $scope.monthCategoryRawData = [{
+                            key: categorySpendChartKey,
+                            values: data.categoryData
+                        }];
+                        $scope.monthSubCategoryRawData = [{
+                            key: data.categoryData[0].category,
+                            values: data.categoryData[0].sub_categories
+                        }];
+                    } else {
+                        $scope.monthCategoryRawData = [];
+                        $scope.monthSubCategoryRawData = [];
+                    }
                 });
             }
-
             $scope.xCatFunction = function () {
                 return function (d) {
                     return d[xAxisDataVarNameForCat];
@@ -68,9 +72,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             };
 
             $scope.$on('monthChanged', function (event, reqDate) {
-                console.log("here we are in MonthCategoryStatsCtrl");
                 getDataFromService(reqDate);
-
             });
 
             $scope.$on('elementClick.directive', function (angularEvent, event) {
@@ -94,18 +96,20 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             dailySpendChartKey = "Daily Spend";
 
         function getDataFromService(requestedDate) {
-
             var monthReq = requestedDate.getFullYear() + "-" + (requestedDate.getMonth() + 1)
             MonthStatsDailyService.get(monthReq).then(function (data) {
-                $scope.monthDailyRawData = [{
-                    key: dailySpendChartKey,
-                    values: data.dailyData
+                if (data.dailyData.length>0) {
+                    $scope.monthDailyRawData = [{
+                        key: dailySpendChartKey,
+                        values: data.dailyData
                     }];
-                $scope.monthlySummary = data.summary;
+                    $scope.monthlySummary = data.summary;
+                } else {
+                    $scope.monthDailyRawData = []
+                    $scope.monthlySummary = {}
+                }
             });
         }
-
-
         $scope.xFunction = function () {
             return function (d) {
                 return d[xAxisDataVarName];
@@ -119,11 +123,13 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
 
         $scope.colorFunction = function () {
             var minKey = "minimum",
-                maxKey = "maximum",
-                color = d3.scale.linear()
-                .domain([$scope.monthlySummary[minKey], $scope.monthlySummary[maxKey]])
-                .range(["#88FF00", "#DD0000"]);
+                maxKey = "maximum";
             return function (d, i) {
+                // NOTE: Not sure if this is the right place for this.
+                var color = d3.scale.linear()
+                    .domain([$scope.monthlySummary[minKey], $scope.monthlySummary[maxKey]])
+                    .range(["#88FF00", "#DD0000"]);
+
                 var y = d[yAxisDataVarName];
                 return color(y);
             };
@@ -148,7 +154,6 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
         };
 
         $scope.$on('monthChanged', function (event, reqDate) {
-            console.log("here we are in MonthDailyStatsCtrl");
             getDataFromService(reqDate);
         });
 

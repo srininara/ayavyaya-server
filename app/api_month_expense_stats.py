@@ -5,15 +5,17 @@ from app import api
 import app.month_stats_provider as msp
 
 
+# Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
 class MonthStatsDailyAPI(Resource):
     def get(self, month_identifier):
+        # Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
         output = {}
         output["dailyData"], output["summary"] = msp.daily_data(month_identifier)
         return output, 200
 
-
 class MonthStatsCategoryAPI(Resource):
     def get(self, month_identifier):
+        # Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
         output = {"categoryData": msp.category_data(month_identifier)}
         return output, 200
 

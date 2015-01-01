@@ -17,17 +17,19 @@ def _money_format(value):
 
 
 def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
-    summary = {"mean": _money_format(np.mean(daily_expense_values_for_a_month)),
-               "total": _money_format(sum(daily_expense_values_for_a_month)),
-               "median": _money_format(np.median(daily_expense_values_for_a_month)),
-               "maximum": _money_format(max(daily_expense_values_for_a_month)),
-               "minimum": _money_format(min(daily_expense_values_for_a_month)),
-               "lower_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 25)),
-               "upper_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 75))}
+    summary = {}
+    if daily_expense_values_for_a_month:
+        summary = {"mean": _money_format(np.mean(daily_expense_values_for_a_month)),
+                   "total": _money_format(sum(daily_expense_values_for_a_month)),
+                   "median": _money_format(np.median(daily_expense_values_for_a_month)),
+                   "maximum": _money_format(max(daily_expense_values_for_a_month)),
+                   "minimum": _money_format(min(daily_expense_values_for_a_month)),
+                   "lower_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 25)),
+                   "upper_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 75))}
     return summary
 
-
 def daily_data(month_identifier):
+    # Behavior note: Even when data for the criteria is not found, the method empty shells
     start_date = to_first_day_from_mth_str(month_identifier)
     end_date = add_a_month_to(start_date)
     daily_expenses_tuple_list = db.session.query(
@@ -41,6 +43,7 @@ def daily_data(month_identifier):
 
 
 def category_data(month_identifier):
+    # Behavior note: Even when data for the criteria is not found, the method empty shells
     start_date = to_first_day_from_mth_str(month_identifier)
     end_date = add_a_month_to(start_date)
 
