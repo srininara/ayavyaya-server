@@ -172,7 +172,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
         };
                 
         $scope.showSummary = function () {
-            return Object.keys($scope.monthlySummary).length > 0;
+            return $scope.monthlySummary && Object.keys($scope.monthlySummary).length > 0;
         }
         
 
