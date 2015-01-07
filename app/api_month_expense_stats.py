@@ -9,8 +9,10 @@ class MonthStatsDailyAPI(Resource):
     def get(self, month_identifier):
         # Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
         output = {}
-        output["dailyData"], output["summary"] = msp.daily_stats(month_identifier)
+        output["dailyData"], output["summary"], output["prev_month_summary"], output["comparison"] = msp.daily_stats(
+            month_identifier)
         return output, 200
+
 
 class MonthStatsCategoryAPI(Resource):
     def get(self, month_identifier):

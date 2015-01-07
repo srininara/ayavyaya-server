@@ -49,20 +49,23 @@
                                 <div class="panel panel-default" ng-show="showSummary()">
                                     <ul class="list-group">
                                         <li class="list-group-item">
-                                            <span>{{monthlySummary.maximum}}</span>
-                                            <span class="label label-danger pull-right">Highest</span>
+                                            <span ng-attr-title={{maxAttrs.title}}>{{monthlySummary.maximum}}</span>
+                                            <span class="glyphicon" ng-class="[maxAttrs.iconClass, maxAttrs.colorClass]" ng-attr-title={{maxAttrs.title}} aria-hidden="true"></span>
+                                            <span class="label label-info pull-right">Highest</span>
                                         </li>
                                         <li class="list-group-item">
-                                            <span>{{monthlySummary.mean}}</span>
+                                            <span ng-attr-title={{avgAttrs.title}}>{{monthlySummary.mean}}</span>
+                                            <span class="glyphicon" ng-class="[avgAttrs.iconClass, avgAttrs.colorClass]" ng-attr-title={{avgAttrs.title}} aria-hidden="true"></span>
                                             <span class="label label-info pull-right">Average</span>
                                         </li>
                                         <li class="list-group-item">
-                                            <span>{{monthlySummary.median}}</span>
-                                            <span class="label label-success pull-right">Median</span>
+                                            <span ng-attr-title={{medianAttrs.title}}>{{monthlySummary.median}}</span>
+                                            <span class="glyphicon" ng-class="[medianAttrs.iconClass, medianAttrs.colorClass]" ng-attr-title={{medianAttrs.title}} aria-hidden="true"></span>
+                                            <span class="label label-info pull-right">Median</span>
                                         </li>
                                         <li class="list-group-item">
                                             <span>{{monthlySummary.total}}</span>
-                                            <span class="label label-default pull-right">Total Expenses</span>
+                                            <span class="label label-info pull-right">Total Expenses</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -79,15 +82,40 @@
                                 <h3 class="panel-title">Category Spending</h3>
                             </div>
                             <div class="panel-body">
-                                <div class="col-md-8">
-                                    <nvd3-discrete-bar-chart id="expense-category-aggregate-graph" data="monthCategoryRawData" showXAxis="true" showYAxis="true" showLegend="true" height="350" staggerLabels="true" tooltips="true" x="xCatFunction()" y="yCatFunction()" noData="No Data is available">
+                                <div class="col-md-12">
+                                    <nvd3-discrete-bar-chart id="expense-category-aggregate-graph" data="monthCategoryRawData" showXAxis="true" showYAxis="true" showLegend="true" height="300" staggerLabels="true" tooltips="true" x="xCatFunction()" y="yCatFunction()" noData="No Data is available">
                                         <svg></svg>
                                     </nvd3-discrete-bar-chart>
                                 </div>
-                                <div class="col-md-4">
-                                    <nvd3-discrete-bar-chart id="expense-sub-category-aggregate-graph" data="monthSubCategoryRawData" showXAxis="true" showYAxis="true" showLegend="true" height="200" staggerLabels="true" tooltips="true" x="xSubCatFunction()" y="ySubCatFunction()" noData="">
+                                <div class="col-md-6">
+                                    <nvd3-discrete-bar-chart id="expense-sub-category-aggregate-graph" data="monthSubCategoryRawData" showXAxis="true" showYAxis="true" showLegend="true" height="250" staggerLabels="true" tooltips="true" x="xSubCatFunction()" y="ySubCatFunction()" noData="">
                                         <svg></svg>
                                     </nvd3-discrete-bar-chart>
+                                </div>
+                                <!-- Category comparison table -->
+                                <div class="col-md-6">
+                                    <table class="table">
+                                        <tr>
+                                            <th></th>
+                                            <th>{{requestedDate | date: 'MMM-yyyy'}}</th>
+                                            <th>{{prevMonthDate | date: 'MMM-yyyy'}}</th>
+                                        </tr>
+                                        <tr class="info">
+                                            <td>{{monthSelectedCategoryRawData.category}}
+                                                <span class="glyphicon" ng-class="createComparisonClasses(monthSelectedCategoryRawData.category_comparison)" aria-hidden="true"></span>
+                                            </td>
+                                            <td>{{monthSelectedCategoryRawData.category_expenses}}</td>
+                                            <td>{{monthSelectedCategoryRawData.prev_month_category_expenses}}</td>
+                                        </tr>
+                                        <tr ng-repeat="subCategory in monthSelectedCategoryRawData.sub_categories">
+                                            <td>{{subCategory.sub_category}}
+                                                <span class="glyphicon" ng-class="createComparisonClasses(subCategory.sub_category_comparison)" aria-hidden="true"></span>
+                                            </td>
+                                            <td>{{subCategory.sub_category_expenses}}</td>
+                                            <td>{{subCategory.prev_month_sub_category_expenses}}</td>
+                                        </tr>
+                                    </table>
+
                                 </div>
 
                             </div>

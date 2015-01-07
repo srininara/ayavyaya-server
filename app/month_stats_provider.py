@@ -11,6 +11,8 @@ from app.model_expense_category import Expense_Category
 from app.model_expense_subcategory import Expense_Subcategory
 from app.date_utils import *
 
+tolerance_limit = 5
+
 
 def _money_format(value):
     return "{0:.2f}".format(value)
@@ -35,47 +37,112 @@ def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
     return summary
 
 
-def daily_stats(month_identifier):
-    # Behavior note: Even when data for the criteria is not found, the method empty shells
-    end_date, start_date = _find_start_end_dates(month_identifier)
-    daily_expenses_tuple_list = db.session.query(
+def _get_cat_sub_cat_listing():
+    return db.session.query(Expense_Category.name.label("category"),
+                            Expense_Subcategory.name.label("sub_category")).join(
+        Expense_Subcategory,
+        Expense_Subcategory.category_id == Expense_Category.id).all()
+
+
+def _get_daily_expenses(start_date, end_date):
+    return db.session.query(
         Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(
         Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
         Expense.expense_date).order_by(Expense.expense_date).all()
+
+
+def _get_expenses_with_category_info(start_date, end_date):
+    return db.session.query(Expense.amount.label("expense"),
+                            Expense_Category.name.label("category"),
+                            Expense_Subcategory.name.label("sub_category")).join(
+        Expense_Category, Expense_Category.id == Expense.category_id).join(
+        Expense_Subcategory, Expense_Subcategory.id == Expense.subcategory_id).filter(
+        Expense.expense_date >= start_date, Expense.expense_date < end_date).all()
+
+
+def _compare(curr_value, prev_value, tolerance_limit):
+    min_value = prev_value * (1 - (tolerance_limit / 100.0))
+    max_value = prev_value * (1 + (tolerance_limit / 100.0))
+    return "Decreased" if curr_value < min_value else "Increased" if curr_value > max_value else "In Limit"
+
+
+def _calc_comparison(summary, prev_month_summary):
+    comparison_attributes = ["maximum", "mean", "median"]
+    if summary and prev_month_summary:
+        return {x: _compare(float(summary[x]), float(prev_month_summary[x]), tolerance_limit) for x in
+                comparison_attributes}
+    else:
+        return {}
+
+
+def daily_stats(month_identifier):
+    # Behavior note: Even when data for the criteria is not found, the method empty shells
+    end_date, start_date = _find_start_end_dates(month_identifier)
+    prev_month_start_date = prev_month_to(start_date)
+    daily_expenses_tuple_list = _get_daily_expenses(start_date, end_date)
+    prev_daily_expenses_tuple_list = _get_daily_expenses(prev_month_start_date, start_date)
+
     daily_values = [{"expense_date": to_str_from_datetime(expense_date), "daily_expense": float(daily_expense)} for
                     expense_date, daily_expense in daily_expenses_tuple_list]
     summary = _calc_daily_expenses_summary_obj([x["daily_expense"] for x in daily_values])
-    return daily_values, summary
+
+    prev_month_summary = _calc_daily_expenses_summary_obj([float(x) for _, x in prev_daily_expenses_tuple_list])
+
+    comparison = _calc_comparison(summary, prev_month_summary)
+
+    return daily_values, summary, prev_month_summary, comparison
 
 
 def category_stats(month_identifier):
     # Behavior note: Even when data for the criteria is not found, the method empty shells
     end_date, start_date = _find_start_end_dates(month_identifier)
+    prev_month_start_date = prev_month_to(start_date)
 
-    exp_list_with_full_category_info = db.session.query(Expense.amount.label("expense"),
-                                                        Expense_Category.name.label("category"),
-                                                        Expense_Subcategory.name.label("sub_category")).join(
-        Expense_Category, Expense_Category.id == Expense.category_id).join(
-        Expense_Subcategory, Expense_Subcategory.id == Expense.subcategory_id).filter(
-        Expense.expense_date >= start_date, Expense.expense_date < end_date).all()
+    exp_list_with_full_category_info = _get_expenses_with_category_info(start_date, end_date)
+    prev_month_exp_list_with_full_category_info = _get_expenses_with_category_info(prev_month_start_date, start_date)
+    raw_cat_listing = _get_cat_sub_cat_listing()
 
+    cat_list_grouped_by_category = itz.groupby(lambda tup: tup[0], raw_cat_listing)
     exp_list_grouped_by_category = itz.groupby(lambda tup: tup[1], exp_list_with_full_category_info)
+    prev_month_exp_list_grouped_by_category = itz.groupby(lambda tup: tup[1],
+                                                          prev_month_exp_list_with_full_category_info)
 
     output = []
-    for category in sorted(exp_list_grouped_by_category):
-        category_raw_data = exp_list_grouped_by_category[category]
-        category_rec = {"category": category, "category_expenses": float(ft.reduce(lambda exp, tup: exp + tup[0],
-                                                                                   category_raw_data, 0)),
+    for category in sorted(cat_list_grouped_by_category):
+        cat_list_raw = cat_list_grouped_by_category.get(category)
+        cat_exp_raw = exp_list_grouped_by_category.get(category)
+        prev_mth_cat_exp_raw = prev_month_exp_list_grouped_by_category.get(category)
+        category_expenses = float(ft.reduce(lambda exp, tup: exp + tup[0], cat_exp_raw, 0)) if cat_exp_raw else 0
+        prev_month_category_expenses = float(ft.reduce(lambda exp, tup: exp + tup[0], prev_mth_cat_exp_raw,
+                                                       0)) if prev_mth_cat_exp_raw else 0
+        category_comparison = _compare(category_expenses, prev_month_category_expenses, tolerance_limit)
+        category_rec = {"category": category, "category_expenses": category_expenses,
+                        "prev_month_category_expenses": prev_month_category_expenses,
+                        "category_comparison": category_comparison,
                         "sub_categories": []}
-        cat_exp_list_grouped_by_sub_category = itz.groupby(lambda tup: tup[2], category_raw_data)
-        for sub_category in sorted(cat_exp_list_grouped_by_sub_category):
-            sub_category_data = cat_exp_list_grouped_by_sub_category[sub_category]
-            sub_category_rec = {"sub_category": sub_category,
-                                "sub_category_expenses": float(ft.reduce(lambda exp, tup: exp + tup[0],
-                                                                         sub_category_data, 0))}
-            category_rec["sub_categories"].append(sub_category_rec)
-            output.append(category_rec)
 
+        cat_list_grouped_by_sub_cat = itz.groupby(lambda tup: tup[1], cat_list_raw)
+        cat_exp_list_grouped_by_sub_category = itz.groupby(lambda tup: tup[2], cat_exp_raw) if cat_exp_raw else {}
+        prev_mth_cat_exp_list_grpd_by_sub_cat = itz.groupby(lambda tup: tup[2],
+                                                            prev_mth_cat_exp_raw) if prev_mth_cat_exp_raw else {}
+
+        for sub_category in sorted(cat_list_grouped_by_sub_cat):
+            sub_category_data = cat_exp_list_grouped_by_sub_category.get(sub_category)
+            prev_mth_sub_category_data = prev_mth_cat_exp_list_grpd_by_sub_cat.get(sub_category)
+            sub_category_expenses = float(ft.reduce(lambda exp, tup: exp + tup[0],
+                                                    sub_category_data, 0)) if sub_category_data else 0
+            prev_month_sub_category_expenses = float(ft.reduce(lambda exp, tup: exp + tup[0],
+                                                               prev_mth_sub_category_data,
+                                                               0)) if prev_mth_sub_category_data else 0
+            sub_category_comparison = _compare(sub_category_expenses, prev_month_sub_category_expenses, tolerance_limit)
+
+            sub_category_rec = {"sub_category": sub_category,
+                                "sub_category_expenses": sub_category_expenses,
+                                "prev_month_sub_category_expenses": prev_month_sub_category_expenses,
+                                "sub_category_comparison": sub_category_comparison}
+            category_rec["sub_categories"].append(sub_category_rec)
+
+        output.append(category_rec)
     return output
 
 

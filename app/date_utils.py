@@ -27,3 +27,7 @@ def to_first_day_from_mth_str(value):
 
 def add_a_month_to(the_date):
     return the_date + relativedelta(months=+1)
+
+
+def prev_month_to(the_date):
+    return the_date + relativedelta(months=-1)
