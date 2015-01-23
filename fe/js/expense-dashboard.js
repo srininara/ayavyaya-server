@@ -8,8 +8,11 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
         function ($scope) {
             "use strict";
             $scope.$watch("requestedMonthYear", function (newVal) {
-                $scope.$broadcast("monthChanged", $scope.requestedMonthYear);
+                $scope.$broadcast("currMonthChanged", $scope.requestedMonthYear);
             });
+//            $scope.$watch("comparisonMonthYear", function (newVal) {
+//                $scope.$broadcast("compMonthChanged", $scope.comparisonMonthYear);
+//            });
 
             $scope.openMP = function ($event) {
                 $event.preventDefault();
@@ -20,7 +23,9 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             $scope.monthPickerOptions = {
                 minMode: 'month'
             };
-            $scope.requestedMonthYear = new Date();
+            var reqDate = $scope.requestedMonthYear = new Date();
+//            $scope.comparisonMonthYear = new Date(reqDate.getFullYear(), reqDate.getMonth() - 1, 1);
+
 
         }])
     .controller('MonthTopExpensesStatsCtrl', ['$scope', 'MonthStatsTopExpensesService',
@@ -35,7 +40,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 });
             }
 
-            $scope.$on('monthChanged', function (event, reqDate) {
+            $scope.$on('currMonthChanged', function (event, reqDate) {
                 getDataFromService(reqDate);
             });
 
@@ -79,8 +84,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 function isLow() {
                     return comparisonVal === "Decreased";
                 }
-                return ["glyphicon-" + (isHigh() ? "circle-arrow-up" : isLow()?"circle-arrow-down":"ok-sign"), "text-" + (isHigh() ? "danger" : isLow() ? "success" : "info")];
-//                return ["glyphicon-thumbs-" + (isHigh() ? "down" : "up"), "text-" + (isHigh() ? "danger" : isLow() ? "success" : "info")];
+                return ["glyphicon-" + (isHigh() ? "circle-arrow-up" : isLow() ? "circle-arrow-down" : "ok-sign"), "text-" + (isHigh() ? "danger" : isLow() ? "success" : "info")];
             };
 
             $scope.xCatFunction = function () {
@@ -104,9 +108,9 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 };
             };
 
-            $scope.$on('monthChanged', function (event, reqDate) {
+            $scope.$on('currMonthChanged', function (event, reqDate) {
                 $scope.requestedDate = reqDate;
-                $scope.prevMonthDate = new Date(reqDate.getFullYear(),reqDate.getMonth()-1,1);
+                $scope.prevMonthDate = new Date(reqDate.getFullYear(), reqDate.getMonth() - 1, 1);
                 getDataFromService(reqDate);
             });
 
@@ -139,8 +143,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                     return comparisonVal === "Decreased";
                 }
                 return {
-//                    iconClass: "glyphicon-thumbs-" + (isHigh() ? "down" : "up"),
-                    iconClass: "glyphicon-" + (isHigh() ? "circle-arrow-up" : isLow()?"circle-arrow-down":"ok-sign"),
+                    iconClass: "glyphicon-" + (isHigh() ? "circle-arrow-up" : isLow() ? "circle-arrow-down" : "ok-sign"),
                     colorClass: "text-" + (isHigh() ? "danger" : isLow() ? "success" : "info"),
                     title: comparisonVal + " - last month: " + prevMonthValue
                 }
@@ -231,7 +234,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 return $scope.monthlySummary && Object.keys($scope.monthlySummary).length > 0;
             }
 
-            $scope.$on('monthChanged', function (event, reqDate) {
+            $scope.$on('currMonthChanged', function (event, reqDate) {
                 getDataFromService(reqDate);
             });
 
