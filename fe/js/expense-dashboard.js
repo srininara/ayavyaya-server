@@ -10,9 +10,6 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
             $scope.$watch("requestedMonthYear", function (newVal) {
                 $scope.$broadcast("currMonthChanged", $scope.requestedMonthYear);
             });
-//            $scope.$watch("comparisonMonthYear", function (newVal) {
-//                $scope.$broadcast("compMonthChanged", $scope.comparisonMonthYear);
-//            });
 
             $scope.openMP = function ($event) {
                 $event.preventDefault();
@@ -24,9 +21,6 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                 minMode: 'month'
             };
             var reqDate = $scope.requestedMonthYear = new Date();
-//            $scope.comparisonMonthYear = new Date(reqDate.getFullYear(), reqDate.getMonth() - 1, 1);
-
-
         }])
     .controller('MonthTopExpensesStatsCtrl', ['$scope', 'MonthStatsTopExpensesService',
         function ($scope, MonthStatsTopExpensesService) {
