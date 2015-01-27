@@ -10,3 +10,5 @@ logfile
 analysis/
 .pydevproject
 .idea/
+*.pyc
+scratchpad.txt

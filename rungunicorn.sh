@@ -1,1 +1,1 @@
-gunicorn app:app
+gunicorn -w 1 app:app -k gevent
