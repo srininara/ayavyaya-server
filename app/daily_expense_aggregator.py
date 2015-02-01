@@ -1,11 +1,11 @@
 __author__ = 'srininara'
 import datetime
-import statistics as stats
 
+import statistics as stats
 from dateutil.relativedelta import *
 
 from app import db
-from app.model_expense import Expense
+from app.model.model_expense import Expense
 from app.date_utils import calc_month_key
 from app.date_utils import to_str_from_datetime
 

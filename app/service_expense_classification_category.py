@@ -1,8 +1,8 @@
 from toolz.itertoolz import *
 
 from app import db
-from app.model_expense import Expense
-from app.model_expense_category import Expense_Category
+from app.model.model_expense import Expense
+from app.model.model_expense_category import Expense_Category
 from app.date_utils import calc_month_key
 
 

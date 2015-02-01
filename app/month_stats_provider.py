@@ -6,9 +6,9 @@ import numpy as np
 import toolz.itertoolz as itz
 
 from app import db
-from app.model_expense import Expense
-from app.model_expense_category import Expense_Category
-from app.model_expense_subcategory import Expense_Subcategory
+from app.model.model_expense import Expense
+from app.model.model_expense_category import Expense_Category
+from app.model.model_expense_subcategory import Expense_Subcategory
 from app.date_utils import *
 
 tolerance_limit = 5

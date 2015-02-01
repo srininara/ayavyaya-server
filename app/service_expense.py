@@ -3,20 +3,20 @@ import datetime
 from dateutil.relativedelta import *
 
 from app import db
-from app.model_expense import Expense
-from app.model_expense import expense_from_dict
-from app.model_tag import tag_from_dict
-from app.model_expense_nature import expense_nature_from_dict
-from app.model_expense_frequency import expense_frequency_from_dict
-from app.model_expense_category import Expense_Category
-from app.model_expense_category import expense_category_from_dict
-from app.model_expense_subcategory import Expense_Subcategory
-from app.model_expense_subcategory import expense_subcategory_from_dict
+from app.model.model_expense import Expense
+from app.model.model_expense import expense_from_dict
+from app.model.model_tag import tag_from_dict
+from app.model.model_expense_nature import expense_nature_from_dict
+from app.model.model_expense_frequency import expense_frequency_from_dict
+from app.model.model_expense_category import Expense_Category
+from app.model.model_expense_category import expense_category_from_dict
+from app.model.model_expense_subcategory import Expense_Subcategory
+from app.model.model_expense_subcategory import expense_subcategory_from_dict
 import app.service_expense_classification_category as excc_sv
 import app.service_expense_classification_nature as excn_sv
 import app.service_expense_classification_frequency as excf_sv
 import app.daily_expense_aggregator as dagg
-from app.model_expense import to_dict
+from app.model.model_expense import to_dict
 from app.date_utils import to_str_from_datetime
 
 

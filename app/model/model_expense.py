@@ -1,12 +1,12 @@
 from app import db
 from app.date_utils import to_date
 from app.date_utils import to_str_from_datetime
-from app.model_tag import tags
-from app.model_tag import to_dict as tag_as_dict
-from app.model_expense_nature import to_dict as nature_as_dict
-from app.model_expense_frequency import to_dict as frequency_as_dict
-from app.model_expense_category import to_dict as category_as_dict
-from app.model_expense_subcategory import to_dict as subcategory_as_dict
+from app.model.model_tag import tags
+from app.model.model_tag import to_dict as tag_as_dict
+from app.model.model_expense_nature import to_dict as nature_as_dict
+from app.model.model_expense_frequency import to_dict as frequency_as_dict
+from app.model.model_expense_category import to_dict as category_as_dict
+from app.model.model_expense_subcategory import to_dict as subcategory_as_dict
 
 
 class Expense(db.Model):
