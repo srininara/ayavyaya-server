@@ -2,12 +2,12 @@ from flask import request
 
 from flask.ext.restful import Resource  # , reqparse
 from app import api
-import app.service_expense as ex_sv
+import app.service.service_expense as ex_sv
 
 
 class ExpenseListAPI(Resource):
     def get(self):
-        print("expenses list get")
+        return {"expenses": ex_sv.get_expenses()}, 200
 
     def post(self):
         expense_out = ex_sv.add_expense(request.json)
@@ -43,14 +43,9 @@ class ClassifiedExpensesAPI(Resource):
             output = ex_sv.get_expense_aggregates_for_classification(classificationType)
         return {classificationType: output}, 200
 
-# class NatureOfExpenseAPI(Resource):
-# def get(self):
-#     return {"nature": ex_sv.get_expense_aggregates_for_nature_with_split()}
-
 api.add_resource(ExpenseListAPI, '/grihasthi/api/v1.0/expenses', endpoint='expenses')
 api.add_resource(ExpenseAPI, '/grihasthi/api/v1.0/expenses/<int:id>', endpoint='expense')
 api.add_resource(ExpenseAggregatesAPI, '/grihasthi/api/v1.0/expenseAggregates/<string:period>',
                  endpoint='expenseAggregates')
 api.add_resource(ClassifiedExpensesAPI, '/grihasthi/api/v1.0/expenseClassification/<string:classificationType>',
                  endpoint='expenseClassification')
-# api.add_resource(NatureOfExpenseAPI, '/grihasthi/api/v1.0/expenseNature', endpoint='expenseNature')

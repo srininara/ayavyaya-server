@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Slno,Date,Description,Amount,Tag1,Tag2
-expense_list_API_url = "http://localhost:5000/grihasthi/api/v1.0/expenses"
+expense_list_API_url = "http://localhost:5000/grihasthi/apis/v1.0/expenses"
 
 
 def convert(value):

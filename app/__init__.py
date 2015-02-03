@@ -2,11 +2,11 @@ import os
 
 from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
+from gevent.monkey import patch_all
+from psycogreen.gevent import patch_psycopg
 
 from flask.ext.restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
-from gevent.monkey import patch_all
-from psycogreen.gevent import patch_psycopg
 
 patch_all()
 patch_psycopg()
@@ -23,6 +23,9 @@ db.engine.pool._use_threadlocal = True
 
 api = Api(app)
 
-from app import api_expense
-from app import api_month_expense_stats
+from app.apis import api_month_expense_stats
+from app.apis import api_expense
+from app.apis import api_category
+from app.apis import api_frequency
+from app.apis import api_nature
 from app import app_fe

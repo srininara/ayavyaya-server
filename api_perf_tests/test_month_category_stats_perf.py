@@ -44,10 +44,10 @@ if __name__ == '__main__':
     except IndexError:
         num_requests = 100
 
-    # t0 = time_fetch_urls("http://127.0.0.1:5000/grihasthi/api/v1.0/monthStatsDaily/2015-1", num_requests)
-    t1 = time_fetch_urls("http://127.0.0.1:8000/grihasthi/api/v1.0/monthStatsCategory/2015-1", num_requests)
+    # t0 = time_fetch_urls("http://127.0.0.1:5000/grihasthi/apis/v1.0/monthStatsDaily/2015-1", num_requests)
+    t1 = time_fetch_urls("http://127.0.0.1:8000/grihasthi/apis/v1.0/monthStatsCategory/2015-1", num_requests)
     # t1 = time_fetch_urls("http://www.google.co.in", num_requests)
-    # t1 = time_fetch_urls("http://127.0.0.1:8000/grihasthi/api/v1.0/dummy", num_requests)
+    # t1 = time_fetch_urls("http://127.0.0.1:8000/grihasthi/apis/v1.0/dummy", num_requests)
 
     print("------------------------------------------")
     # print("SUM TOTAL = %.2fs" % (t0 + t1))

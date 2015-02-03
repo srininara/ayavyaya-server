@@ -5,10 +5,11 @@ import functools as ft
 import numpy as np
 import toolz.itertoolz as itz
 
+
 from app import db
 from app.model.model_expense import Expense
-from app.model.model_expense_category import Expense_Category
-from app.model.model_expense_subcategory import Expense_Subcategory
+from app.queries import expense_queries as eq
+from app.queries import expense_category_queries as ecq
 from app.date_utils import *
 
 tolerance_limit = 5
@@ -36,30 +37,6 @@ def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
                    "upper_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 75))}
     return summary
 
-
-def _get_cat_sub_cat_listing():
-    return db.session.query(Expense_Category.name.label("category"),
-                            Expense_Subcategory.name.label("sub_category")).join(
-        Expense_Subcategory,
-        Expense_Subcategory.category_id == Expense_Category.id).all()
-
-
-def _get_daily_expenses(start_date, end_date):
-    return db.session.query(
-        Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(
-        Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
-        Expense.expense_date).order_by(Expense.expense_date).all()
-
-
-def _get_expenses_with_category_info(start_date, end_date):
-    return db.session.query(Expense.amount.label("expense"),
-                            Expense_Category.name.label("category"),
-                            Expense_Subcategory.name.label("sub_category")).join(
-        Expense_Category, Expense_Category.id == Expense.category_id).join(
-        Expense_Subcategory, Expense_Subcategory.id == Expense.subcategory_id).filter(
-        Expense.expense_date >= start_date, Expense.expense_date < end_date).all()
-
-
 def _compare(curr_value, prev_value, tolerance_limit):
     min_value = prev_value * (1 - (tolerance_limit / 100.0))
     max_value = prev_value * (1 + (tolerance_limit / 100.0))
@@ -79,8 +56,8 @@ def daily_stats(month_identifier):
     # Behavior note: Even when data for the criteria is not found, the method empty shells
     end_date, start_date = _find_start_end_dates(month_identifier)
     prev_month_start_date = prev_month_to(start_date)
-    daily_expenses_tuple_list = _get_daily_expenses(start_date, end_date)
-    prev_daily_expenses_tuple_list = _get_daily_expenses(prev_month_start_date, start_date)
+    daily_expenses_tuple_list = eq.get_daily_expenses(start_date, end_date)
+    prev_daily_expenses_tuple_list = eq.get_daily_expenses(prev_month_start_date, start_date)
 
     daily_values = [{"expense_date": to_str_from_datetime(expense_date), "daily_expense": float(daily_expense)} for
                     expense_date, daily_expense in daily_expenses_tuple_list]
@@ -98,9 +75,9 @@ def category_stats(month_identifier):
     end_date, start_date = _find_start_end_dates(month_identifier)
     prev_month_start_date = prev_month_to(start_date)
 
-    exp_list_with_full_category_info = _get_expenses_with_category_info(start_date, end_date)
-    prev_month_exp_list_with_full_category_info = _get_expenses_with_category_info(prev_month_start_date, start_date)
-    raw_cat_listing = _get_cat_sub_cat_listing()
+    exp_list_with_full_category_info = eq.get_expenses_with_category_info(start_date, end_date)
+    prev_month_exp_list_with_full_category_info = eq.get_expenses_with_category_info(prev_month_start_date, start_date)
+    raw_cat_listing = ecq.get_cat_sub_cat_listing()
 
     cat_list_grouped_by_category = itz.groupby(lambda tup: tup[0], raw_cat_listing)
     exp_list_grouped_by_category = itz.groupby(lambda tup: tup[1], exp_list_with_full_category_info)

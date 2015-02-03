@@ -2,12 +2,12 @@ __author__ = 'srininara'
 
 from flask.ext.restful import Resource
 from app import api
-import app.month_stats_provider as msp
+import app.service.month_stats_provider as msp
 
 
 class MonthStatsDailyAPI(Resource):
     def get(self, month_identifier):
-        # Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
+        # Behavior note: Even when data for the criteria is not found, the stats apis returns 200 with empty shells
         output = {}
         output["dailyData"], output["summary"], output["prev_month_summary"], output["comparison"] = msp.daily_stats(
             month_identifier)
@@ -16,14 +16,14 @@ class MonthStatsDailyAPI(Resource):
 
 class MonthStatsCategoryAPI(Resource):
     def get(self, month_identifier):
-        # Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
+        # Behavior note: Even when data for the criteria is not found, the stats apis returns 200 with empty shells
         output = {"categoryData": msp.category_stats(month_identifier)}
         return output, 200
 
 
 class MonthStatsTopExpensesAPI(Resource):
     def get(self, month_identifier):
-        # Behavior note: Even when data for the criteria is not found, the stats api returns 200 with empty shells
+        # Behavior note: Even when data for the criteria is not found, the stats apis returns 200 with empty shells
         output = {}
         output["topExpensesByValue"], output["topExpensesByFrequency"] = msp.top_expenses_stats(month_identifier)
         return output, 200
