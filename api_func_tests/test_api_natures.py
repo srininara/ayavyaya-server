@@ -14,5 +14,9 @@ class TestNaturesAPI(unittest.TestCase):
         output = r.json()["natures"]
         output_len = len(output)
         self.assertTrue(output_len > 0)
+        self.assertIsNotNone(output[0]["name"])
+        self.assertIsNotNone(output[0]["id"])
+        self.assertIsNotNone(output[0]["description"])
+
 
 

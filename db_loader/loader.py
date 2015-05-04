@@ -44,5 +44,3 @@ with open('DailyExpenseTrackerV2.csv', 'r') as f:
                       , row['Sub Category'], row['Nature'], row['Frequency'], row['Tag1'], row['Tag2'])
 
 
-# if __name__ == '__main__':
-# unittest.main()
