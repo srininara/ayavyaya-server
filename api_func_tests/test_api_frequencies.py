@@ -14,5 +14,6 @@ class TestFrequenciesAPI(unittest.TestCase):
         output = r.json()["frequencies"]
         output_len = len(output)
         self.assertTrue(output_len > 0)
-
-
+        self.assertIsNotNone(output[0]["name"])
+        self.assertIsNotNone(output[0]["id"])
+        self.assertIsNotNone(output[0]["description"])

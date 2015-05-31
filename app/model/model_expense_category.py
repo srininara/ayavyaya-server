@@ -25,10 +25,10 @@ def expense_category_from_dict(the_dict):
     id = the_dict.get('id', -1)
     name = the_dict.get('name', "")
     description = the_dict.get('description', "")
-    if id != -1:
+    if id and id != -1:
         exp_category = Expense_Category.query.get(id)
         return exp_category
-    elif name != "":
+    elif name and name != "":
         exp_category = Expense_Category.query.filter_by(name=name).first()
         if exp_category is None:
             raise ValueError("Can't find a category with this name")

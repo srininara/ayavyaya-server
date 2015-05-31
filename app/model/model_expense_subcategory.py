@@ -29,7 +29,7 @@ def expense_subcategory_from_dict(the_dict):
     id = the_dict.get('id', -1)
     name = the_dict.get('name', "")
     description = the_dict.get('description', "")
-    if id != -1:
+    if id and id != -1:
         exp_subcategory = Expense_Subcategory.query.get(id)
         return exp_subcategory
     elif name:

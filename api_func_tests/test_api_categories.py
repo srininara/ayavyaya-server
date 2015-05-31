@@ -12,7 +12,9 @@ class TestCategoriesAPI(unittest.TestCase):
     def test_get_categories(self):
         r = requests.get(self.category_list_API_url)
         output = r.json()["categories"]
-        output_len = len(output)
-        self.assertTrue(output_len > 0)
-
-
+        cat_len = len(output)
+        self.assertTrue(cat_len > 0)
+        self.assertIsNotNone(output[0]["category"])
+        self.assertIsNotNone(output[0]["category_id"])
+        self.assertIsNotNone(output[0]["cat_desc"])
+        self.assertIsNotNone(output[0]["subcategories"])

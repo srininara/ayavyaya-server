@@ -25,10 +25,10 @@ def expense_nature_from_dict(the_dict):
     id = the_dict.get('id', -1)
     name = the_dict.get('name', "")
     description = the_dict.get('description', "")
-    if id != -1:
+    if id and id != -1:
         expense_nature = Expense_Nature.query.get(id)
         return expense_nature
-    elif name != "":
+    elif name and name != "":
         expense_nature = Expense_Nature.query.filter_by(name=name).first()
         if expense_nature is None:
             raise ValueError("Can't find a nature with this name")
