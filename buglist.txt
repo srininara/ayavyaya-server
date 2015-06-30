@@ -1,0 +1,1 @@
+1. Update of expense which removes a tag does not work - tag is not removed.
