@@ -12,3 +12,4 @@ analysis/
 .idea/
 *.pyc
 scratchpad.txt
+gunicorn-logs/

@@ -11,6 +11,7 @@ class ExpenseListAPI(Resource):
 
     def post(self):
         expense_out = ex_sv.add_expense(request.json)
+        expense_out['amount'] = str(expense_out['amount'])
         return expense_out, 201
 
 
@@ -19,7 +20,8 @@ class ExpenseAPI(Resource):
         print("expense get")
 
     def put(self, id):
-        print("expense put")
+        expense_updated = ex_sv.update_expense(id, request.json)
+        return expense_updated, 200
 
     def delete(self, id):
         print("expense delete")

@@ -49,7 +49,8 @@ def to_dict(expense):
     out['id'] = expense.id
     out['description'] = expense.description
     out['expense_date'] = to_str_from_datetime(expense.expense_date)
-    out['amount'] = str(expense.amount)
+    # out['amount'] = str(expense.amount)
+    out['amount'] = float(expense.amount)
 
     nature_output = nature_as_dict(expense.nature)
     frequency_output = frequency_as_dict(expense.frequency)

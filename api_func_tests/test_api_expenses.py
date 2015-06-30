@@ -57,7 +57,7 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertEqual(len(tags), 2)
 
 
-    def test_get_expenses_default(self):
+    def _test_get_expenses_default(self):
         r = requests.get(self.expense_list_API_url)
         output = r.json()["expenses"]
         output_len = len(output)
@@ -66,6 +66,27 @@ class TestExpensesAPI(unittest.TestCase):
         test_rec = output[rand_index]
         test_date = datetime.strptime(test_rec["expense_date"], "%Y-%m-%d")
         self.assertTrue(test_date <= datetime.now())
+
+    def test_update_expenses(self):
+        r = requests.get(self.expense_list_API_url)
+        records = r.json()["expenses"]
+        output_len = len(records)
+        rand_index = randint(0, output_len)
+        update_rec = records[rand_index]
+        updated_desc = update_rec.get("description") + " updated"
+        update_rec["description"] = updated_desc
+        headers = {'content-type': 'application/json'}
+
+        up_r = requests.put(self.expense_list_API_url+"/"+str(update_rec.get("id")), data=json.dumps(update_rec), headers=headers)
+
+        self.assertEqual(200, up_r.status_code)
+        r_u = requests.get(self.expense_list_API_url)
+        records_u = r_u.json()["expenses"]
+        for rec in records_u:
+            if rec.get("id") == update_rec.get("id"):
+                self.assertEqual(rec.get("description"), update_rec.get("description"))
+
+
 
 
 
