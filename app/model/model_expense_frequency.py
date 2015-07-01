@@ -15,9 +15,10 @@ class Expense_Frequency(db.Model):
 
 def to_dict(expense_frequency):
     out = {}
-    out['id'] = expense_frequency.id
-    out['name'] = expense_frequency.name
-    out['description'] = expense_frequency.description
+    if expense_frequency:
+        out['id'] = expense_frequency.id
+        out['name'] = expense_frequency.name
+        out['description'] = expense_frequency.description
     return out
 
 
@@ -33,5 +34,3 @@ def expense_frequency_from_dict(the_dict):
         if expense_frequency is None:
             raise ValueError("Can't find a frequency with this name")
         return expense_frequency
-    else:
-        raise ValueError("Need to provide name or id")

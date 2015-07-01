@@ -15,9 +15,10 @@ class Expense_Category(db.Model):
 
 def to_dict(expense_category):
     out = {}
-    out['id'] = expense_category.id
-    out['name'] = expense_category.name
-    out['description'] = expense_category.description
+    if expense_category:
+        out['id'] = expense_category.id
+        out['name'] = expense_category.name
+        out['description'] = expense_category.description
     return out
 
 
@@ -33,5 +34,3 @@ def expense_category_from_dict(the_dict):
         if exp_category is None:
             raise ValueError("Can't find a category with this name")
         return exp_category
-    else:
-        raise ValueError("Need to provide name or id")

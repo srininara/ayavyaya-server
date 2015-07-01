@@ -19,9 +19,10 @@ class Expense_Subcategory(db.Model):
 
 def to_dict(expense_subcategory):
     out = {}
-    out['id'] = expense_subcategory.id
-    out['name'] = expense_subcategory.name
-    out['description'] = expense_subcategory.description
+    if expense_subcategory:
+        out['id'] = expense_subcategory.id
+        out['name'] = expense_subcategory.name
+        out['description'] = expense_subcategory.description
     return out
 
 
@@ -37,5 +38,3 @@ def expense_subcategory_from_dict(the_dict):
         if exp_subcategory is None:
             raise ValueError("Can't find a sub category with this name: ")
         return exp_subcategory
-    else:
-        raise ValueError("Need to provide name or id")

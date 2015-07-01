@@ -15,9 +15,10 @@ class Expense_Nature(db.Model):
 
 def to_dict(expense_nature):
     out = {}
-    out['id'] = expense_nature.id
-    out['name'] = expense_nature.name
-    out['description'] = expense_nature.description
+    if expense_nature:
+        out['id'] = expense_nature.id
+        out['name'] = expense_nature.name
+        out['description'] = expense_nature.description
     return out
 
 
@@ -33,5 +34,3 @@ def expense_nature_from_dict(the_dict):
         if expense_nature is None:
             raise ValueError("Can't find a nature with this name")
         return expense_nature
-    else:
-        raise ValueError("Need to provide name or id")
