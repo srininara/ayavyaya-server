@@ -1,1 +1,16 @@
-1. Update of expense which removes a tag does not work - tag is not removed.
+Bugs:
+- Update of expense which removes a tag does not work - tag is not removed.
+
+
+Regular Dev items
+- Convert null to "Not Available" for nature when expense is created. Also fix the static loader to work with Not available
+- Convert null to "Not Available" for category when expense is created. Also fix the static loader to work with Not available
+- Convert null to "Not Available" for subcategory when expense is created.
+    Also fix the static loader to work with Not available. Use category id * -1 for na subcategories except for -1 category.
+- Convert null to "Not Available" for frequency when expense is created. Also fix the static loader to work with Not available
+- Convert null to "Not Available" for nature when expense is updated
+- Convert null to "Not Available" for category when expense is updated
+- Convert null to "Not Available" for subcategory when expense is updated
+- Convert null to "Not Available" for frequency when expense is updated
+- Convert get default to go to ES instead of database
+- Get by id support in API
