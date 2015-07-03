@@ -3,7 +3,6 @@ Bugs:
 
 
 Regular Dev items
-- Convert null to "Not Available" for nature when expense is created. Also fix the static loader to work with Not available
 - Convert null to "Not Available" for category when expense is created. Also fix the static loader to work with Not available
 - Convert null to "Not Available" for subcategory when expense is created.
     Also fix the static loader to work with Not available. Use category id * -1 for na subcategories except for -1 category.

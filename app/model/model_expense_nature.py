@@ -34,3 +34,6 @@ def expense_nature_from_dict(the_dict):
         if expense_nature is None:
             raise ValueError("Can't find a nature with this name")
         return expense_nature
+    else:
+        expense_nature = Expense_Nature.query.get(-1) # default is not available
+        return expense_nature

@@ -74,6 +74,7 @@ def add_expense(expense_dict):
     db.session.add(expense)
     db.session.commit()
     committed_expense_dict = to_dict(expense)
+
     _add_to_es(committed_expense_dict)
     return committed_expense_dict
 

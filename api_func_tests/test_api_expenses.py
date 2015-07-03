@@ -96,6 +96,10 @@ class TestExpensesAPI(unittest.TestCase):
 
         r = requests.post(self.expense_list_API_url,data=json.dumps(payload),headers=headers)
         self.assertEqual(201, r.status_code)
+        created_expense = r.json()
+        self.assertIsNotNone(created_expense)
+        self.assertIsNotNone(created_expense.get("id"))
+        self.assertIsNotNone(created_expense.get("nature"))
 
 
 
