@@ -2,6 +2,7 @@
 from app import db
 
 
+DEFAULT_NOT_AVAILABLE_ID = - 1000
 class Expense_Nature(db.Model):
     __tablename__ = 'expense_nature'
     id = db.Column(db.Integer, primary_key=True)
@@ -23,10 +24,10 @@ def to_dict(expense_nature):
 
 
 def expense_nature_from_dict(the_dict):
-    id = the_dict.get('id', -1)
+    id = the_dict.get('id', DEFAULT_NOT_AVAILABLE_ID)
     name = the_dict.get('name', "")
     description = the_dict.get('description', "")
-    if id and id != -1:
+    if id and id != DEFAULT_NOT_AVAILABLE_ID:
         expense_nature = Expense_Nature.query.get(id)
         return expense_nature
     elif name and name != "":
@@ -35,5 +36,5 @@ def expense_nature_from_dict(the_dict):
             raise ValueError("Can't find a nature with this name")
         return expense_nature
     else:
-        expense_nature = Expense_Nature.query.get(-1) # default is not available
+        expense_nature = Expense_Nature.query.get(DEFAULT_NOT_AVAILABLE_ID)
         return expense_nature
