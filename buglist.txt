@@ -3,9 +3,8 @@ Bugs:
 
 
 Regular Dev items
-- Convert null to "Not Available" for nature when expense is updated
-- Convert null to "Not Available" for category when expense is updated
-- Convert null to "Not Available" for subcategory when expense is updated
-- Convert null to "Not Available" for frequency when expense is updated
+- Validate expense - date and amount always mandatory
+- Validate expense - either description or category is mandatory
 - Convert get default to go to ES instead of database
 - Get by id support in API
+- Test whether Gevent is working with Elasticsearch

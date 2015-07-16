@@ -1,22 +1,32 @@
 #!/usr/bin/env python
 import unittest
-import requests
 import json
 from random import randint
 from datetime import datetime
 
+import requests
+
+
+NOT_AVAILABLE_NAME = "Not Available"
 
 class TestExpensesAPI(unittest.TestCase):
     def setUp(self):
         self.expense_list_API_url = "http://localhost:5000/grihasthi/api/v1.0/expenses"
+        self.headers = {'content-type': 'application/json'}
+
+    def _create_expense_without_tags(self):
+        return dict(description='test expense without tag', expense_date='2014-07-31', amount='110.10',
+                    category='Apparel', subcategory='Regular Wear', nature='Necessity', frequency='Regular')
+
+    def _create_expense_with_tags(self):
+        return dict(description='test expense with tag', expense_date='2015-02-02', amount='110.10',
+                    tags=[{"name": "testTag1"}, {"name": "testTag2"}], category='Apparel', subcategory='Regular Wear',
+                    nature='Necessity', frequency='Regular')
 
     def _test_post_expenses_without_tags(self):
-        payload = {'description': 'test expense without tag'
-            , 'expense_date': '2014-07-31', 'amount': '110.10', 'category': 'Apparel'
-            , 'subcategory': 'Regular Wear', 'nature': 'Necessity', 'frequency': 'Regular'}
-        headers = {'content-type': 'application/json'}
+        payload = self._create_expense_without_tags()
 
-        r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=headers)
+        r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=self.headers)
         self.assertEqual(201, r.status_code)
         output = r.json()
 
@@ -37,10 +47,7 @@ class TestExpensesAPI(unittest.TestCase):
     # def test_post_expenses_with_non_existant_category(self):
 
     def _test_post_expenses_with_tags(self):
-        payload = {'description': 'test expense with tag', 'expense_date': '2015-02-02'
-            , 'amount': '110.10', 'tags': [{"name": "testTag1"}, {"name": "testTag2"}]
-            , 'category': 'Apparel', 'subcategory': 'Regular Wear', 'nature': 'Necessity'
-            , 'frequency': 'Regular'}
+        payload = self._create_expense_with_tags()
         headers = {'content-type': 'application/json'}
 
         r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=headers)
@@ -56,7 +63,6 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertIsNotNone(tags)
         self.assertEqual(len(tags), 2)
 
-
     def _test_get_expenses_default(self):
         r = requests.get(self.expense_list_API_url)
         output = r.json()["expenses"]
@@ -70,31 +76,28 @@ class TestExpensesAPI(unittest.TestCase):
     def _test_update_expenses(self):
         r = requests.get(self.expense_list_API_url)
         records = r.json()["expenses"]
+        print(records)
         output_len = len(records)
-        rand_index = randint(0, output_len)
+        rand_index = randint(0, output_len-1)
         update_rec = records[rand_index]
         updated_desc = update_rec.get("description") + " updated"
         update_rec["description"] = updated_desc
-        headers = {'content-type': 'application/json'}
 
-        up_r = requests.put(self.expense_list_API_url+"/"+str(update_rec.get("id")), data=json.dumps(update_rec), headers=headers)
+        up_r = requests.put(self.expense_list_API_url + "/" + str(update_rec.get("id")), data=json.dumps(update_rec),
+                            headers=self.headers)
 
         self.assertEqual(200, up_r.status_code)
+        # TODO: Getting all the expenses in the world is not the best idea
         r_u = requests.get(self.expense_list_API_url)
         records_u = r_u.json()["expenses"]
         for rec in records_u:
             if rec.get("id") == update_rec.get("id"):
                 self.assertEqual(rec.get("description"), update_rec.get("description"))
 
+    def _test_postExpenses_with_only_date_and_amount_is_allowed(self):
+        payload = {'expense_date': '2015-07-01', 'amount': '120.10'}
 
-
-
-
-    def test_postExpenses_with_only_date_and_amount_is_allowed(self):
-        payload = {'expense_date':'2015-07-01', 'amount':'120.10'}
-        headers = {'content-type': 'application/json'}
-
-        r = requests.post(self.expense_list_API_url,data=json.dumps(payload),headers=headers)
+        r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=self.headers)
         self.assertEqual(201, r.status_code)
         created_expense = r.json()
         print(created_expense)
@@ -104,6 +107,35 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertIsNotNone(created_expense.get("frequency"))
         self.assertIsNotNone(created_expense.get("category"))
         self.assertIsNotNone(created_expense.get("subcategory"))
+
+    def test_create_a_normal_expense_without_tags_and_then_update_it_to_have_only_date_and_amount(self):
+        payload = self._create_expense_without_tags()
+
+        r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=self.headers)
+        self.assertEqual(201, r.status_code)
+        output = r.json()
+
+        self.assertTrue(output.get('id', -1) != -1)
+
+        payload = {'id': output.get('id'),'expense_date': '2015-07-01', 'amount': '120.10'}
+        up_r = requests.put(self.expense_list_API_url + "/" + str(output.get("id")), data=json.dumps(payload),
+                            headers=self.headers)
+
+        self.assertEqual(200, up_r.status_code)
+        up_rec = up_r.json()
+        self.assertEqual(output.get("id"),up_rec.get("id"))
+        # More assertsadded for checking whether the values of category etc. have got updated to Not Available.
+        self.assertEqual(up_rec.get("frequency"), NOT_AVAILABLE_NAME)
+        self.assertEqual(up_rec.get("nature"), NOT_AVAILABLE_NAME)
+        self.assertEqual(up_rec.get("category"), NOT_AVAILABLE_NAME)
+        self.assertEqual(up_rec.get("subcategory"), NOT_AVAILABLE_NAME)
+        self.assertTrue(up_rec.get("frequency_id") < 0)
+        self.assertTrue(up_rec.get("nature_id") < 0)
+        self.assertTrue(up_rec.get("category_id") < 0)
+        self.assertTrue(up_rec.get("subcategory_id") < 0)
+
+
+
 
 
 if __name__ == '__main__':
