@@ -116,7 +116,7 @@ def update_expense(id, expense_dict):
 
 
 def get_expenses():
-    expenses = eq.get_expenses(datetime.datetime.now(), 20)
+    expenses = eq.get_expenses(datetime.datetime.now(), 50)
     expense_dict_list = []
     for expense in expenses:
         expense_dict = to_dict(expense)

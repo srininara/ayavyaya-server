@@ -6,11 +6,11 @@ from sqlalchemy import create_engine, MetaData
 
 
 
-# SQLALCHEMY_DATABASE_URI = 'postgresql://grihasthi_app:grihasthi_app1!@localhost/grihasthi_db'
+SQLALCHEMY_DATABASE_URI = 'postgresql://grihasthi_app:grihasthi_app1!@localhost/grihasthi_db'
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-    '/Users/narayasr/SriniRoot/MyStore/Code/altProgrammingLangs/python/atom_projects/ang-flask-learn/just-try',
-    'expense.db')
+#  SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+#     '/Users/narayasr/SriniRoot/MyStore/Code/altProgrammingLangs/python/atom_projects/ang-flask-learn/just-try',
+#     'expense.db')
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 # meta = MetaData(bind=engine)

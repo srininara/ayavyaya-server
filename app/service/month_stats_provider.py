@@ -78,8 +78,7 @@ def category_stats(month_identifier):
     exp_list_with_full_category_info = eq.get_expenses_with_category_info(start_date, end_date)
     prev_month_exp_list_with_full_category_info = eq.get_expenses_with_category_info(prev_month_start_date, start_date)
     raw_cat_listing = ecq.get_cat_sub_cat_listing()
-
-    cat_list_grouped_by_category = itz.groupby(lambda tup: tup[0], raw_cat_listing)
+    cat_list_grouped_by_category = itz.groupby(lambda tup: tup[1], raw_cat_listing)
     exp_list_grouped_by_category = itz.groupby(lambda tup: tup[1], exp_list_with_full_category_info)
     prev_month_exp_list_grouped_by_category = itz.groupby(lambda tup: tup[1],
                                                           prev_month_exp_list_with_full_category_info)
@@ -98,7 +97,7 @@ def category_stats(month_identifier):
                         "category_comparison": category_comparison,
                         "sub_categories": []}
 
-        cat_list_grouped_by_sub_cat = itz.groupby(lambda tup: tup[1], cat_list_raw)
+        cat_list_grouped_by_sub_cat = itz.groupby(lambda tup: tup[4], cat_list_raw)
         cat_exp_list_grouped_by_sub_category = itz.groupby(lambda tup: tup[2], cat_exp_raw) if cat_exp_raw else {}
         prev_mth_cat_exp_list_grpd_by_sub_cat = itz.groupby(lambda tup: tup[2],
                                                             prev_mth_cat_exp_raw) if prev_mth_cat_exp_raw else {}
@@ -126,7 +125,7 @@ def category_stats(month_identifier):
 def top_expenses_stats(month_identifier):
     # Behavior note: Even when data for the criteria is not found, the method empty shells
     end_date, start_date = _find_start_end_dates(month_identifier)
-    limit_val = 10
+    limit_val = 15
     top_expenses_by_value_raw_list = db.session.query(
         Expense.description, db.func.sum(Expense.amount).label("expense_amount"),
         db.func.count(Expense.amount).label("frequency")).filter(
