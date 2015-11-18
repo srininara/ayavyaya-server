@@ -13,3 +13,4 @@ analysis/
 *.pyc
 scratchpad.txt
 gunicorn-logs/
+postgres_logs
