@@ -53,53 +53,22 @@ def _calc_comparison(summary, prev_month_summary):
         return {}
 
 
-# Keeping this in the repository to remind how much bad code I coult write. Will remove in the next checkin.
-# def give_append_summary_func():
-#         initial_val = [0]  # Super hack this is!!!
-#         def append_summary_func(daily_expenses_tuple):
-#             cum_val = daily_expenses_tuple[1] + initial_val[0]
-#             initial_val[0] = cum_val
-#             new_tuple = daily_expenses_tuple + (cum_val,)
-#             return new_tuple
-#
-#         return append_summary_func
-
-
-# inspired from toolz accumulate method
-def accumulate_value(daily_expenses_tuple_list):
-    if daily_expenses_tuple_list:
-        seq = iter(daily_expenses_tuple_list)
-        first = next(seq)
-        result = first + (first[1],)
-        yield result
-        for elem in seq:
-            cum_val = elem[1]+result[2]
-            result = elem + (cum_val,)
-            yield result
-
-
-
 def daily_stats(month_identifier):
     # Behavior note: Even when data for the criteria is not found, the method empty shells
     end_date, start_date = _find_start_end_dates(month_identifier)
     prev_month_start_date = prev_month_to(start_date)
     daily_expenses_tuple_list = eq.get_daily_expenses(start_date, end_date)
-    # daily_expenses_with_cumulative_value_tuple_list = list(accumulate_value(daily_expenses_tuple_list))
 
-    # This change was done based on Tejas' suggestion
-    # Another suggestion he made was to create domain specific functions on top of what toolz provides so that
-    # the code is more understandable. I agree on that.
-    daily_expenses_with_cumulative_value_tuple_generator = itz.map(lambda daily_expense, cum_value: daily_expense +
+    daily_expenses_with_cum_expense_tuple_generator = itz.map(lambda daily_expense, cum_value: daily_expense +
                                                                 (cum_value,) ,daily_expenses_tuple_list,
                                                                    itz.accumulate(add,itz.pluck(1,
                                                                         daily_expenses_tuple_list)))
-    print(list(daily_expenses_with_cumulative_value_tuple_generator))
-    prev_daily_expenses_tuple_list = eq.get_daily_expenses(prev_month_start_date, start_date)
-    prev_daily_expenses_with_cumulative_value_tuple_list = list(accumulate_value(prev_daily_expenses_tuple_list))
 
-    # TODO NEXT - Change this daily values to send out cumulative expense value.
-    daily_values = [{"expense_date": to_str_from_datetime(expense_date), "daily_expense": float(daily_expense)} for
-                    expense_date, daily_expense in daily_expenses_tuple_list]
+    prev_daily_expenses_tuple_list = eq.get_daily_expenses(prev_month_start_date, start_date)
+
+
+    daily_values = [{"expense_date": to_str_from_datetime(expense_date), "daily_expense": float(daily_expense), "cumulative_expense": float(cum_expense)} for
+                    expense_date, daily_expense, cum_expense in daily_expenses_with_cum_expense_tuple_generator]
     summary = _calc_daily_expenses_summary_obj([x["daily_expense"] for x in daily_values])
 
     prev_month_summary = _calc_daily_expenses_summary_obj([float(x) for _, x in prev_daily_expenses_tuple_list])

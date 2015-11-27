@@ -126,6 +126,7 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
 
             var xAxisDataVarName = "expense_date",
                 yAxisDataVarName = "daily_expense",
+                yAxisDataVarNameForCumulative = "cumulative_expense",
                 dailySpendChartKey = "Daily Spend";
 
             function createComparisonAttributes(comparisonVal, prevMonthValue) {
@@ -186,9 +187,24 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                     return d[xAxisDataVarName];
                 };
             };
+
+            $scope.xFunctionCumulative = function () {
+                return function (d) {
+                		var input = d[xAxisDataVarName]
+                		var dateObj = new Date(input);
+                    return d3.time.format('%e')(dateObj);
+                };
+            };
+
             $scope.yFunction = function () {
                 return function (d) {
                     return d[yAxisDataVarName];
+                };
+            };
+
+            $scope.yFunctionCumulative = function () {
+                return function (d) {
+                    return d[yAxisDataVarNameForCumulative];
                 };
             };
 
@@ -212,7 +228,8 @@ angular.module('expensesDashboard', ['ui.bootstrap', 'restangular', 'nvd3ChartDi
                     var dateObj = new Date(input),
                         day = d3.time.format('%e')(dateObj),
                         day_to_show = d3.time.format('%e-%b')(dateObj);
-                    return (day % dailyDataXAxisTickInterval === 0) ? day_to_show : "";
+                        var to_show = (day % dailyDataXAxisTickInterval === 0) ? day_to_show : ""
+                    return to_show;
                 };
             };
 
