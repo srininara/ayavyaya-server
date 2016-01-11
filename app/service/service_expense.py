@@ -43,7 +43,8 @@ def _get_start_date(months_back):
     return start
 
 def _add_to_es(committed_expense_dict=None):
-    es.index(index='ayavyaya', doc_type='expense', id=committed_expense_dict.get('id'), body=committed_expense_dict)
+    pass
+    # es.index(index='ayavyaya', doc_type='expense', id=committed_expense_dict.get('id'), body=committed_expense_dict)
 
 def add_expense(expense_dict):
     expense = expense_from_dict(expense_dict)
