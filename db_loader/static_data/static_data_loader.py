@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, MetaData
 
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-    '/home/srininara/localroot/Personal/Code/myCodeProjects/ayavyaya-dirty/just-try',
+    '../../',
     'expense.db')
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
