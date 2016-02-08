@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import csv
 import os
+import logging
 
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, select, func
 
 
 
@@ -13,6 +14,7 @@ from sqlalchemy import create_engine, MetaData
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
     '../',
     'expense.db')
+logging.basicConfig(level=logging.INFO)
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
@@ -22,6 +24,8 @@ expenses_tags = meta.tables['expenses_tags']
 tag = meta.tables['tag']
 expense = meta.tables['expense']
 connection = engine.connect()
+count_expenses = connection.execute(select([func.count()]).select_from(expense)).scalar()
+logging.info("Going to delete expenses. Count is " + str(count_expenses)); 
 del_e_t = expenses_tags.delete()
 connection.execute(del_e_t)
 del_t = tag.delete()
