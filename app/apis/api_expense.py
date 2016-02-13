@@ -2,7 +2,11 @@ from flask import request
 
 from flask.ext.restful import Resource  # , reqparse
 from app import api
+from app import app
+
 import app.service.service_expense as ex_sv
+
+log = app.logger
 
 
 class ExpenseListAPI(Resource):
@@ -10,6 +14,7 @@ class ExpenseListAPI(Resource):
         return {"expenses": ex_sv.get_expenses()}, 200
 
     def post(self):
+        log.debug("Expense Post Called ")
         expense_out = ex_sv.add_expense(request.json)
         expense_out['amount'] = str(expense_out['amount'])
         return expense_out, 201

@@ -12,6 +12,6 @@ analysis/
 .idea/
 *.pyc
 scratchpad.txt
-gunicorn-logs/
+logs/
 postgres_logs
 **/*.DS_Store

@@ -6,9 +6,11 @@ import logging
 from datetime import datetime
 
 # Slno,Date,Description,Amount,Tag1,Tag2
-expense_list_API_url = "http://localhost:5000/grihasthi/api/v1.0/expenses"
+expense_list_API_url = "http://localhost:8000/grihasthi/api/v1.0/expenses"
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
 def convert(value):
@@ -21,7 +23,6 @@ def post_expenses(date, description, amount, category, subcategory, nature, freq
                'nature': nature, 'frequency': frequency
                }
     if subcategory:
-        # print(subcategory.split(":")[1])
         payload['subcategory'] = subcategory.split(":")[1]
 
     if tag1:
