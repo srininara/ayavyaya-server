@@ -38,7 +38,7 @@ def post_expenses(date, description, amount, category, subcategory, nature, freq
         raise RuntimeError("insert failed")
 
 
-with open('DailyExpenseTrackerV2.csv', 'r') as f:
+with open('./trans_data/DailyExpenseTrackerV2.csv', 'r') as f:
     reader = csv.DictReader(f, delimiter=',')
     count = 0
     for row in reader:
@@ -47,7 +47,6 @@ with open('DailyExpenseTrackerV2.csv', 'r') as f:
         count+=1
         if count%100 == 0:
             logging.info("Inserted records: " + str(count)); 
-            
         post_expenses(convert(row['Date']), row['Description'], row['Amount'], row['Category']
                       , row['Sub Category'], row['Nature'], row['Frequency'], row['Tag1'], row['Tag2'])
 
