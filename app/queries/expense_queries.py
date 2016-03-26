@@ -20,6 +20,6 @@ def get_expenses_with_category_info(start_date, end_date):
         Expense.expense_date >= start_date, Expense.expense_date < end_date).all()
 
 
-def get_expenses(start_date, no_of_recs):
+def get_expenses(start_date, start_index, no_of_recs):
     return db.session.query(Expense).filter(Expense.expense_date <= start_date).order_by(
-        Expense.expense_date.desc()).limit(no_of_recs).all()
+        Expense.expense_date.desc()).offset(start_index).limit(no_of_recs).all()

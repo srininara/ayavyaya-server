@@ -116,8 +116,12 @@ def update_expense(id, expense_dict):
     return committed_expense_dict
 
 
-def get_expenses():
-    expenses = eq.get_expenses(datetime.datetime.now(), 50)
+def get_expenses(index, size):
+    start_index = index if index else 0
+    page_size = size if size else 50
+    if start_index >= 250:
+        raise ValueError("Digging too deep. Try doing a different search or lookup.")
+    expenses = eq.get_expenses(datetime.datetime.now(), start_index, page_size)
     expense_dict_list = []
     for expense in expenses:
         expense_dict = to_dict(expense)

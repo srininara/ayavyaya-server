@@ -1,8 +1,9 @@
 from flask import request
 
-from flask.ext.restful import Resource  # , reqparse
+from flask.ext.restful import Resource, reqparse
 from app import api
 from app import app
+
 
 import app.service.service_expense as ex_sv
 
@@ -11,7 +12,17 @@ log = app.logger
 
 class ExpenseListAPI(Resource):
     def get(self):
-        return {"expenses": ex_sv.get_expenses()}, 200
+        parser = reqparse.RequestParser()
+        parser.add_argument('index', type=int)
+        parser.add_argument('size', type=int)
+        args = parser.parse_args()
+        index = args.get("index")
+        size = args.get("size")
+        try:
+            expenses = ex_sv.get_expenses(index, size)
+            return {"expenses": expenses}, 200
+        except ValueError as v:
+            return {"error": v.message}, 400
 
     def post(self):
         log.debug("Expense Post Called ")

@@ -67,11 +67,40 @@ class TestExpensesAPI(unittest.TestCase):
         r = requests.get(self.expense_list_API_url)
         output = r.json()["expenses"]
         output_len = len(output)
-        self.assertTrue(output_len <= 20)
+        self.assertTrue(output_len <= 50)
         rand_index = randint(0, output_len)
         test_rec = output[rand_index]
         test_date = datetime.strptime(test_rec["expense_date"], "%Y-%m-%d")
         self.assertTrue(test_date <= datetime.now())
+
+    def test_get_expenses_with_pagination_parameters(self):
+        paginated_url = self.expense_list_API_url + "?index=0&size=2"
+        r = requests.get(paginated_url)
+        first_output = r.json()["expenses"]
+        first_output_len = len(first_output)
+        self.assertTrue(first_output_len == 2)
+
+        paginated_url = self.expense_list_API_url + "?index=1&size=5"
+        r = requests.get(paginated_url)
+        second_output = r.json()["expenses"]
+        second_output_len = len(second_output)
+        self.assertTrue(second_output_len == 5)
+
+        self.assertTrue(first_output[1]["id"] == second_output[0]["id"])
+
+
+    def test_get_expenses_fails_when_pagination_index_is_equal_or_greater_than_250(self):
+        paginated_url = self.expense_list_API_url + "?index=250&size=2"
+        r = requests.get(paginated_url)
+        self.assertTrue(r.status_code==400)
+        paginated_url = self.expense_list_API_url + "?index=251&size=2"
+        r = requests.get(paginated_url)
+        self.assertTrue(r.status_code==400)
+        paginated_url = self.expense_list_API_url + "?index=249&size=2"
+        r = requests.get(paginated_url)
+        self.assertTrue(r.status_code==200)
+
+
 
     def _test_update_expenses(self):
         r = requests.get(self.expense_list_API_url)
@@ -108,7 +137,7 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertIsNotNone(created_expense.get("category"))
         self.assertIsNotNone(created_expense.get("subcategory"))
 
-    def test_create_a_normal_expense_without_tags_and_then_update_it_to_have_only_date_and_amount(self):
+    def _test_create_a_normal_expense_without_tags_and_then_update_it_to_have_only_date_and_amount(self):
         payload = self._create_expense_without_tags()
 
         r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=self.headers)
