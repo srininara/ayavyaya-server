@@ -12,14 +12,12 @@ from app.date_utils import to_date
 # from app.model.model_expense import to_dict
 from app.model.model_tag import tag_from_dict
 from app.model.model_expense_nature import expense_nature_from_dict
-from app.model.model_expense_frequency import expense_frequency_from_dict
 from app.model.model_expense_category import Expense_Category
 from app.model.model_expense_category import expense_category_from_dict
 from app.model.model_expense_subcategory import Expense_Subcategory
 from app.model.model_expense_subcategory import expense_subcategory_from_dict
 import app.service.service_expense_classification_category as excc_sv
 import app.service.service_expense_classification_nature as excn_sv
-import app.service.service_expense_classification_frequency as excf_sv
 import app.service.daily_expense_aggregator as dagg
 from app.model.model_expense import to_dict
 from app.date_utils import to_str_from_datetime
@@ -55,10 +53,6 @@ def add_expense(expense_dict):
     expense_nature = expense_nature_from_dict({'name': expense_dict.get('nature'), 'id': expense_dict.get('nature_id')})
     expense.nature = expense_nature
 
-    expense_frequency = expense_frequency_from_dict(
-        {'name': expense_dict.get('frequency'), 'id': expense_dict.get('frequency_id')})
-    expense.frequency = expense_frequency
-
     expense_category = expense_category_from_dict(
         {'name': expense_dict.get('category'), 'id': expense_dict.get('category_id')})
     expense.category = expense_category
@@ -92,10 +86,6 @@ def update_expense(id, expense_dict):
 
     expense_nature = expense_nature_from_dict({'name': expense_dict.get('nature'), 'id': expense_dict.get('nature_id')})
     upd_exp.nature = expense_nature
-
-    expense_frequency = expense_frequency_from_dict(
-        {'name': expense_dict.get('frequency'), 'id': expense_dict.get('frequency_id')})
-    upd_exp.frequency = expense_frequency
 
     expense_category = expense_category_from_dict(
         {'name': expense_dict.get('category'), 'id': expense_dict.get('category_id')})
@@ -159,7 +149,5 @@ def get_expense_aggregates_for_classification_with_split(classificationType, spl
         return excc_sv.get(split)
     elif classificationType == "nature":
         return excn_sv.get()
-    elif classificationType == "frequency":
-        return excf_sv.get()
 
 

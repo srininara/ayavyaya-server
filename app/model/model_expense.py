@@ -4,7 +4,6 @@ from app.date_utils import to_str_from_datetime
 from app.model.model_tag import tags
 from app.model.model_tag import to_dict as tag_as_dict
 from app.model.model_expense_nature import to_dict as nature_as_dict
-from app.model.model_expense_frequency import to_dict as frequency_as_dict
 from app.model.model_expense_category import to_dict as category_as_dict
 from app.model.model_expense_subcategory import to_dict as subcategory_as_dict
 
@@ -23,9 +22,6 @@ class Expense(db.Model):
 
     nature_id = db.Column(db.Integer, db.ForeignKey('expense_nature.id'))
     nature = db.relationship('Expense_Nature')
-
-    frequency_id = db.Column(db.Integer, db.ForeignKey('expense_frequency.id'))
-    frequency = db.relationship('Expense_Frequency')
 
     expense_tags = db.relationship('Tag', secondary=tags, backref=db.backref('expenses', lazy='dynamic'))
 
@@ -53,17 +49,12 @@ def to_dict(expense):
     out['amount'] = float(expense.amount)
 
     nature_output = nature_as_dict(expense.nature)
-    frequency_output = frequency_as_dict(expense.frequency)
     category_output = category_as_dict(expense.category)
     subcategory_output = subcategory_as_dict(expense.subcategory)
 
     if nature_output:
         out['nature_id'] = nature_output['id']
         out['nature'] = nature_output['name']
-
-    if frequency_output:
-        out['frequency_id'] = frequency_output['id']
-        out['frequency'] = frequency_output['name']
 
     if category_output:
         out['category_id'] = category_output['id']

@@ -17,10 +17,10 @@ def convert(value):
     return (datetime.strptime(value, "%d-%b-%Y")).strftime("%Y-%m-%d")
 
 
-def post_expenses(date, description, amount, category, subcategory, nature, frequency, tag1, tag2):
+def post_expenses(date, description, amount, category, subcategory, nature, tag1, tag2):
     payload = {'description': description,
                'expense_date': date, 'amount': amount, 'category': category,
-               'nature': nature, 'frequency': frequency
+               'nature': nature
                }
     if subcategory:
         payload['subcategory'] = subcategory.split(":")[1]
@@ -48,7 +48,7 @@ with open('./trans_data/DailyExpenseTrackerV2.csv', 'r') as f:
         if count%100 == 0:
             logging.info("Inserted records: " + str(count)); 
         post_expenses(convert(row['Date']), row['Description'], row['Amount'], row['Category']
-                      , row['Sub Category'], row['Nature'], row['Frequency'], row['Tag1'], row['Tag2'])
+                      , row['Sub Category'], row['Nature'], row['Tag1'], row['Tag2'])
 
     logging.info("Total inserted records: " + str(count));
     

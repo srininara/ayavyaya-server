@@ -21,7 +21,6 @@ engine = create_engine(SQLALCHEMY_DATABASE_URI)
 meta = MetaData()
 meta.reflect(bind=engine)
 expense_nature = meta.tables['expense_nature']
-expense_frequency = meta.tables['expense_frequency']
 expense_category = meta.tables['expense_category']
 expense_subcategory = meta.tables['expense_subcategory']
 connection = engine.connect()
@@ -42,17 +41,6 @@ with open('expense_nature.csv', 'r') as f:
                                                description=NOT_AVAILABLE_DESC))
     na_result = connection.execute(na_ins)
 
-with open('expense_frequency.csv', 'r') as f:
-    reader = csv.DictReader(f, delimiter=',')
-    count = 0
-    for row in reader:
-        name = row['name']
-        description = row['description']
-        ins = expense_frequency.insert(values=dict(name=name, description=description))
-        result = connection.execute(ins)
-    na_ins = expense_frequency.insert(values=dict(id=NOT_AVAILABLE_ID, name=NOT_AVAILABLE_NAME,
-                                                  description=NOT_AVAILABLE_DESC))
-    na_result = connection.execute(na_ins)
 
 categories = {}
 

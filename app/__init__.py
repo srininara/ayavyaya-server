@@ -41,6 +41,5 @@ api = Api(app)
 from app.apis import api_month_expense_stats
 from app.apis import api_expense
 from app.apis import api_category
-from app.apis import api_frequency
 from app.apis import api_nature
 from app import app_fe

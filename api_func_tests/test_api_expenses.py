@@ -16,12 +16,12 @@ class TestExpensesAPI(unittest.TestCase):
 
     def _create_expense_without_tags(self):
         return dict(description='test expense without tag', expense_date='2014-07-31', amount='110.10',
-                    category='Apparel', subcategory='Regular Wear', nature='Necessity', frequency='Regular')
+                    category='Apparel', subcategory='Regular Wear', nature='Necessity')
 
     def _create_expense_with_tags(self):
         return dict(description='test expense with tag', expense_date='2015-02-02', amount='110.10',
                     tags=[{"name": "testTag1"}, {"name": "testTag2"}], category='Apparel', subcategory='Regular Wear',
-                    nature='Necessity', frequency='Regular')
+                    nature='Necessity')
 
     def _test_post_expenses_without_tags(self):
         payload = self._create_expense_without_tags()
@@ -37,8 +37,6 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertTrue(output.get('category_id', -1) != -1)
         self.assertEqual(output.get('subcategory', ""), 'Regular Wear')
         self.assertTrue(output.get('subcategory_id', -1) != -1)
-        self.assertEqual(output.get('frequency', ""), 'Regular')
-        self.assertTrue(output.get('frequency_id', -1) != -1)
 
         tags = output.get('tags')
         self.assertIsNotNone(tags)
@@ -57,15 +55,15 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertTrue(output.get('nature_id', -1) != -1)
         self.assertTrue(output.get('category_id', -1) != -1)
         self.assertTrue(output.get('subcategory_id', -1) != -1)
-        self.assertTrue(output.get('frequency_id', -1) != -1)
 
         tags = output.get('tags')
         self.assertIsNotNone(tags)
         self.assertEqual(len(tags), 2)
 
-    def _test_get_expenses_default(self):
+    def test_get_expenses_default(self):
         r = requests.get(self.expense_list_API_url)
         output = r.json()["expenses"]
+        print(output)
         output_len = len(output)
         self.assertTrue(output_len <= 50)
         rand_index = randint(0, output_len)
@@ -133,7 +131,6 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertIsNotNone(created_expense)
         self.assertIsNotNone(created_expense.get("id"))
         self.assertIsNotNone(created_expense.get("nature"))
-        self.assertIsNotNone(created_expense.get("frequency"))
         self.assertIsNotNone(created_expense.get("category"))
         self.assertIsNotNone(created_expense.get("subcategory"))
 
@@ -154,11 +151,9 @@ class TestExpensesAPI(unittest.TestCase):
         up_rec = up_r.json()
         self.assertEqual(output.get("id"),up_rec.get("id"))
         # More assertsadded for checking whether the values of category etc. have got updated to Not Available.
-        self.assertEqual(up_rec.get("frequency"), NOT_AVAILABLE_NAME)
         self.assertEqual(up_rec.get("nature"), NOT_AVAILABLE_NAME)
         self.assertEqual(up_rec.get("category"), NOT_AVAILABLE_NAME)
         self.assertEqual(up_rec.get("subcategory"), NOT_AVAILABLE_NAME)
-        self.assertTrue(up_rec.get("frequency_id") < 0)
         self.assertTrue(up_rec.get("nature_id") < 0)
         self.assertTrue(up_rec.get("category_id") < 0)
         self.assertTrue(up_rec.get("subcategory_id") < 0)

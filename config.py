@@ -10,7 +10,7 @@ SQLALCHEMY_ECHO=False
 #SQLALCHEMY_POOL_SIZE = 15
 
 
-DEBUG = False
+DEBUG = True
 
 # Logging config
 LOG_FILE_PATH = os.path.join(basedir, 'logs/ayavyaya/app.log')
