@@ -49,16 +49,13 @@ def add_expense(expense_dict):
     tags_data = expense_dict.get('tags', None)
 
     # TODO: Not sure if this belongs here or in the model class
-
-    expense_nature = expense_nature_from_dict({'name': expense_dict.get('nature'), 'id': expense_dict.get('nature_id')})
+    expense_nature = expense_nature_from_dict(expense_dict['nature'])
     expense.nature = expense_nature
 
-    expense_category = expense_category_from_dict(
-        {'name': expense_dict.get('category'), 'id': expense_dict.get('category_id')})
+    expense_category = expense_category_from_dict(expense_dict['category'])
     expense.category = expense_category
 
-    expense_subcategory = expense_subcategory_from_dict(
-        {'name': expense_dict.get('subcategory'), 'id': expense_dict.get('subcategory_id')})
+    expense_subcategory = expense_subcategory_from_dict(expense_dict['subcategory'])
     expense.subcategory = expense_subcategory
 
     if tags_data is not None:

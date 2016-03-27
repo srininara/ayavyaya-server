@@ -15,15 +15,24 @@ class TestExpensesAPI(unittest.TestCase):
         self.headers = {'content-type': 'application/json'}
 
     def _create_expense_without_tags(self):
-        return dict(description='test expense without tag', expense_date='2014-07-31', amount='110.10',
-                    category='Apparel', subcategory='Regular Wear', nature='Necessity')
+        category = dict(name='Apparel')
+        subCategory = dict(name="Regular Wear")
+        nature = dict(name="Necessity")
+        return dict(description='test expense without tag', expense_date='2016-03-12', amount='110.10',
+                    category=category, subcategory=subCategory, nature=nature)
 
     def _create_expense_with_tags(self):
-        return dict(description='test expense with tag', expense_date='2015-02-02', amount='110.10',
-                    tags=[{"name": "testTag1"}, {"name": "testTag2"}], category='Apparel', subcategory='Regular Wear',
-                    nature='Necessity')
+        expense = self._create_expense_without_tags()
+        expense['description']='test expense with tag'
+        expense['tags']=[{"name": "testTag1"}, {"name": "testTag2"}]
+        return expense
+        # category = dict(name='Apparel')
+        # subCategory = dict(name="Regular Wear")
+        # nature = dict(name="Necessity")
+        # return dict(description='test expense with tag', expense_date='2015-03-15', amount='110.10',
+        #             tags=[{"name": "testTag1"}, {"name": "testTag2"}], category=category, subcategory=subCategory, nature=nature)
 
-    def _test_post_expenses_without_tags(self):
+    def test_post_expenses_without_tags(self):
         payload = self._create_expense_without_tags()
 
         r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=self.headers)
@@ -31,18 +40,22 @@ class TestExpensesAPI(unittest.TestCase):
         output = r.json()
 
         self.assertTrue(output.get('id', -1) != -1)
-        self.assertEqual(output.get('nature', ""), 'Necessity')
-        self.assertTrue(output.get('nature_id', -1) != -1)
-        self.assertEqual(output.get('category', ""), 'Apparel')
-        self.assertTrue(output.get('category_id', -1) != -1)
-        self.assertEqual(output.get('subcategory', ""), 'Regular Wear')
-        self.assertTrue(output.get('subcategory_id', -1) != -1)
+        output_nature = output.get('nature', {})
+        output_category = output.get('category', {})
+        output_subcategory = output.get('subcategory', {})
+
+        self.assertEqual(output_nature.get('name', ""), 'Necessity')
+        self.assertTrue(output_nature.get('id', -1) != -1)
+        self.assertEqual(output_category.get('name', ""), 'Apparel')
+        self.assertTrue(output_category.get('id', -1) != -1)
+        self.assertEqual(output_subcategory.get('name', ""), 'Regular Wear')
+        self.assertTrue(output_subcategory.get('id', -1) != -1)
 
         tags = output.get('tags')
         self.assertIsNotNone(tags)
         self.assertEqual(len(tags), 0)
 
-    # def test_post_expenses_with_non_existant_category(self):
+    # def test_post_expenses_with_non_existent_category(self):
 
     def _test_post_expenses_with_tags(self):
         payload = self._create_expense_with_tags()
@@ -51,27 +64,35 @@ class TestExpensesAPI(unittest.TestCase):
         r = requests.post(self.expense_list_API_url, data=json.dumps(payload), headers=headers)
         self.assertEqual(201, r.status_code)
         output = r.json()
+        output_nature = output.get('nature', {})
+        output_category = output.get('category', {})
+        output_subcategory = output.get('subcategory', {})
+
         self.assertTrue(output.get('id', -1) != -1)
-        self.assertTrue(output.get('nature_id', -1) != -1)
-        self.assertTrue(output.get('category_id', -1) != -1)
-        self.assertTrue(output.get('subcategory_id', -1) != -1)
+        self.assertTrue(output_nature.get('id', -1) != -1)
+        self.assertTrue(output_category.get('id', -1) != -1)
+        self.assertTrue(output_subcategory.get('id', -1) != -1)
 
         tags = output.get('tags')
         self.assertIsNotNone(tags)
         self.assertEqual(len(tags), 2)
 
-    def test_get_expenses_default(self):
+    def _test_get_expenses_default(self):
         r = requests.get(self.expense_list_API_url)
         output = r.json()["expenses"]
-        print(output)
         output_len = len(output)
         self.assertTrue(output_len <= 50)
         rand_index = randint(0, output_len)
         test_rec = output[rand_index]
         test_date = datetime.strptime(test_rec["expense_date"], "%Y-%m-%d")
         self.assertTrue(test_date <= datetime.now())
+        self.assertGreater(test_rec["amount"],0, "Amount must be greater than 0")
+        self.assertTrue(test_rec["category"]["name"])
+        self.assertTrue(test_rec["subcategory"]["name"])
+        self.assertTrue(test_rec["nature"]["name"])
+        self.assertTrue(test_rec["description"] or test_rec["category"])
 
-    def test_get_expenses_with_pagination_parameters(self):
+    def _test_get_expenses_with_pagination_parameters(self):
         paginated_url = self.expense_list_API_url + "?index=0&size=2"
         r = requests.get(paginated_url)
         first_output = r.json()["expenses"]
@@ -87,7 +108,7 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertTrue(first_output[1]["id"] == second_output[0]["id"])
 
 
-    def test_get_expenses_fails_when_pagination_index_is_equal_or_greater_than_250(self):
+    def _test_get_expenses_fails_when_pagination_index_is_equal_or_greater_than_250(self):
         paginated_url = self.expense_list_API_url + "?index=250&size=2"
         r = requests.get(paginated_url)
         self.assertTrue(r.status_code==400)
@@ -121,6 +142,7 @@ class TestExpensesAPI(unittest.TestCase):
             if rec.get("id") == update_rec.get("id"):
                 self.assertEqual(rec.get("description"), update_rec.get("description"))
 
+    # This is not what we want for the future. We want at least description or category
     def _test_postExpenses_with_only_date_and_amount_is_allowed(self):
         payload = {'expense_date': '2015-07-01', 'amount': '120.10'}
 

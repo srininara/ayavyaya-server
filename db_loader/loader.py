@@ -19,11 +19,11 @@ def convert(value):
 
 def post_expenses(date, description, amount, category, subcategory, nature, tag1, tag2):
     payload = {'description': description,
-               'expense_date': date, 'amount': amount, 'category': category,
-               'nature': nature
+               'expense_date': date, 'amount': amount, 'category': {'name': category},
+               'nature': {'name': nature}
                }
     if subcategory:
-        payload['subcategory'] = subcategory.split(":")[1]
+        payload['subcategory'] = {'name': subcategory.split(":")[1]}
 
     if tag1:
         tags = [{"name": tag1}]

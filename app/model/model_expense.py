@@ -53,16 +53,19 @@ def to_dict(expense):
     subcategory_output = subcategory_as_dict(expense.subcategory)
 
     if nature_output:
-        out['nature_id'] = nature_output['id']
-        out['nature'] = nature_output['name']
+        out["nature"] = nature_output
+        # out['nature_id'] = nature_output['id']
+        # out['nature'] = nature_output['name']
 
     if category_output:
-        out['category_id'] = category_output['id']
-        out['category'] = category_output['name']
+        out["category"] = category_output
+        # out['category_id'] = category_output['id']
+        # out['category'] = category_output['name']
 
     if subcategory_output:
-        out['subcategory_id'] = subcategory_output['id']
-        out['subcategory'] = subcategory_output['name']
+        out["subcategory"] = subcategory_output
+        # out['subcategory_id'] = subcategory_output['id']
+        # out['subcategory'] = subcategory_output['name']
 
     tagsOutput = []
     for tag in expense.expense_tags:
