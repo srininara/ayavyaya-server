@@ -5,11 +5,11 @@ from app.queries import expense_category_queries as ecq
 
 
 def _make_cat_rec(cat_item):
-    return {"category_id": cat_item[0][0],
-            "category": cat_item[0][1],
-            "cat_desc": cat_item[0][2],
-            "subcategories": map(lambda val: {"subcategory_id": val[3],
-                                              "subcategory": val[4], "subcategory_desc": val[5]}, cat_item[1])
+    return {"id": cat_item[0][0],
+            "name": cat_item[0][1],
+            "description": cat_item[0][2],
+            "subcategories": map(lambda val: {"id": val[3],
+                                              "name": val[4], "description": val[5]}, cat_item[1])
             }
 
 def get_cat_sub_cat_listing():

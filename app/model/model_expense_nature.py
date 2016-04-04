@@ -1,5 +1,8 @@
 """ Will hold the expense nature model """
 from app import db
+from app import app
+
+log = app.logger
 
 
 DEFAULT_NOT_AVAILABLE_ID = - 1000
@@ -24,6 +27,7 @@ def to_dict(expense_nature):
 
 
 def expense_nature_from_dict(the_dict):
+    log.debug(the_dict)
     id = the_dict.get('id', DEFAULT_NOT_AVAILABLE_ID)
     name = the_dict.get('name', "")
     description = the_dict.get('description', "")
