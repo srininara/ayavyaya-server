@@ -21,7 +21,11 @@ import app.service.service_expense_classification_nature as excn_sv
 import app.service.daily_expense_aggregator as dagg
 from app.model.model_expense import to_dict
 from app.date_utils import to_str_from_datetime
+from app.date_utils import to_iso_date_from_str
 from app.queries import expense_queries as eq
+from app import app
+
+log = app.logger
 
 es = elasticsearch.Elasticsearch()
 
@@ -46,6 +50,9 @@ def _add_to_es(committed_expense_dict=None):
 
 def add_expense(expense_dict):
     expense = expense_from_dict(expense_dict)
+    log.info(expense_dict.get("last_modified_date"))
+    expense.last_modified_date = to_iso_date_from_str(expense_dict.get("last_modified_date"))
+
     tags_data = expense_dict.get('tags', None)
 
     # TODO: Not sure if this belongs here or in the model class
@@ -58,6 +65,9 @@ def add_expense(expense_dict):
     expense_subcategory = expense_subcategory_from_dict(expense_dict['subcategory'])
     expense.subcategory = expense_subcategory
 
+    log.info(expense.last_modified_date)
+
+
     if tags_data is not None:
         for tag_data in tags_data:
             tag = tag_from_dict(tag_data)
@@ -66,6 +76,9 @@ def add_expense(expense_dict):
     db.session.add(expense)
     db.session.commit()
     committed_expense_dict = to_dict(expense)
+
+    log.info(committed_expense_dict)
+
 
     _add_to_es(committed_expense_dict)
     return committed_expense_dict

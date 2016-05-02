@@ -1,6 +1,7 @@
 from app import db
 from app.date_utils import to_date
 from app.date_utils import to_str_from_datetime
+from app.date_utils import to_iso_str_from_datetime
 from app.model.model_tag import tags
 from app.model.model_tag import to_dict as tag_as_dict
 from app.model.model_expense_nature import to_dict as nature_as_dict
@@ -12,6 +13,7 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(200))
     expense_date = db.Column(db.DateTime())
+    last_modified_date = db.Column(db.DateTime())
     amount = db.Column(db.Numeric(12, 2))
 
     category_id = db.Column(db.Integer, db.ForeignKey('expense_category.id'))
@@ -45,6 +47,7 @@ def to_dict(expense):
     out['id'] = expense.id
     out['description'] = expense.description
     out['expense_date'] = to_str_from_datetime(expense.expense_date)
+    out['last_modified_date'] = to_iso_str_from_datetime(expense.last_modified_date)
     # out['amount'] = str(expense.amount)
     out['amount'] = float(expense.amount)
 
@@ -54,18 +57,12 @@ def to_dict(expense):
 
     if nature_output:
         out["nature"] = nature_output
-        # out['nature_id'] = nature_output['id']
-        # out['nature'] = nature_output['name']
 
     if category_output:
         out["category"] = category_output
-        # out['category_id'] = category_output['id']
-        # out['category'] = category_output['name']
 
     if subcategory_output:
         out["subcategory"] = subcategory_output
-        # out['subcategory_id'] = subcategory_output['id']
-        # out['subcategory'] = subcategory_output['name']
 
     tagsOutput = []
     for tag in expense.expense_tags:

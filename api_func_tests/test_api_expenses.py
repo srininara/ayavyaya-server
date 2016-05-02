@@ -19,7 +19,7 @@ class TestExpensesAPI(unittest.TestCase):
         subCategory = dict(name="Regular Wear")
         nature = dict(name="Necessity")
         return dict(description='test expense without tag', expense_date='2016-03-12', amount='110.10',
-                    category=category, subcategory=subCategory, nature=nature)
+                    category=category, subcategory=subCategory, nature=nature, last_modified_date=datetime.now().isoformat())
 
     def _create_expense_with_tags(self):
         expense = self._create_expense_without_tags()
@@ -50,6 +50,9 @@ class TestExpensesAPI(unittest.TestCase):
         self.assertTrue(output_category.get('id', -1) != -1)
         self.assertEqual(output_subcategory.get('name', ""), 'Regular Wear')
         self.assertTrue(output_subcategory.get('id', -1) != -1)
+
+        self.assertIsNotNone(output.get('last_modified_date'))
+        self.assertEqual(payload.get("last_modified_date"),output.get('last_modified_date'))
 
         tags = output.get('tags')
         self.assertIsNotNone(tags)
