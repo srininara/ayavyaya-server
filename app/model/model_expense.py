@@ -47,7 +47,8 @@ def to_dict(expense):
     out['id'] = expense.id
     out['description'] = expense.description
     out['expense_date'] = to_str_from_datetime(expense.expense_date)
-    out['last_modified_date'] = to_iso_str_from_datetime(expense.last_modified_date)
+    if expense.last_modified_date:
+        out['last_modified_date'] = to_iso_str_from_datetime(expense.last_modified_date)
     # out['amount'] = str(expense.amount)
     out['amount'] = float(expense.amount)
 
