@@ -50,8 +50,8 @@ def _add_to_es(committed_expense_dict=None):
 
 def add_expense(expense_dict):
     expense = expense_from_dict(expense_dict)
-    log.info(expense_dict.get("last_modified_date"))
-    expense.last_modified_date = to_iso_date_from_str(expense_dict.get("last_modified_date"))
+    # log.info(expense_dict.get("last_modified_date"))
+    # expense.last_modified_date = to_iso_date_from_str(expense_dict.get("last_modified_date"))
 
     tags_data = expense_dict.get('tags', None)
 
@@ -94,15 +94,13 @@ def update_expense(id, expense_dict):
 
     # TODO: Not sure if this belongs here or in the model class
 
-    expense_nature = expense_nature_from_dict({'name': expense_dict.get('nature'), 'id': expense_dict.get('nature_id')})
+    expense_nature = expense_nature_from_dict(expense_dict.get('nature'))
     upd_exp.nature = expense_nature
 
-    expense_category = expense_category_from_dict(
-        {'name': expense_dict.get('category'), 'id': expense_dict.get('category_id')})
+    expense_category = expense_category_from_dict(expense_dict.get('category'))
     upd_exp.category = expense_category
 
-    expense_subcategory = expense_subcategory_from_dict(
-        {'name': expense_dict.get('subcategory'), 'id': expense_dict.get('subcategory_id')})
+    expense_subcategory = expense_subcategory_from_dict(expense_dict.get('subcategory'))
     upd_exp.subcategory = expense_subcategory
 
     if tags_data is not None:

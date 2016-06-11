@@ -36,6 +36,7 @@ class ExpenseAPI(Resource):
         print("expense get")
 
     def put(self, id):
+        log.debug("Expense Put Called")
         expense_updated = ex_sv.update_expense(id, request.json)
         return expense_updated, 200
 
