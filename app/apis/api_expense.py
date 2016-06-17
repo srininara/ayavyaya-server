@@ -25,20 +25,29 @@ class ExpenseListAPI(Resource):
             return {"error": v.message}, 400
 
     def post(self):
-        log.debug("Expense Post Called ")
-        expense_out = ex_sv.add_expense(request.json)
-        expense_out['amount'] = str(expense_out['amount'])
-        return expense_out, 201
-
+        try:
+            log.debug("Expense Post Called ")
+            expense_out = ex_sv.add_expense(request.json)
+            expense_out['amount'] = str(expense_out['amount'])
+            return expense_out, 201
+        except ValueError as err:
+            err_out = {}
+            err_out['message'] = err.message
+            return err_out, 400
 
 class ExpenseAPI(Resource):
     def get(self, id):
         print("expense get")
 
     def put(self, id):
-        log.debug("Expense Put Called")
-        expense_updated = ex_sv.update_expense(id, request.json)
-        return expense_updated, 200
+        try:
+            log.debug("Expense Put Called")
+            expense_updated = ex_sv.update_expense(id, request.json)
+            return expense_updated, 200
+        except ValueError as err:
+            err_out = {}
+            err_out['message'] = err.message
+            return err_out, 400
 
     def delete(self, id):
         print("expense delete")

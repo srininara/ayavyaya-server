@@ -48,7 +48,17 @@ def _add_to_es(committed_expense_dict=None):
     pass
     # es.index(index='ayavyaya', doc_type='expense', id=committed_expense_dict.get('id'), body=committed_expense_dict)
 
+
+def validate(expense_dict):
+    exp_date = expense_dict.get('expense_date', None)
+    amount = expense_dict.get('amount', None)
+    description = expense_dict.get('description', None)
+    if not (exp_date and amount and description):
+        raise ValueError("Expense Date, Amount and Description are mandatory")
+
+
 def add_expense(expense_dict):
+    validate(expense_dict)
     expense = expense_from_dict(expense_dict)
     # log.info(expense_dict.get("last_modified_date"))
     # expense.last_modified_date = to_iso_date_from_str(expense_dict.get("last_modified_date"))
@@ -56,17 +66,16 @@ def add_expense(expense_dict):
     tags_data = expense_dict.get('tags', None)
 
     # TODO: Not sure if this belongs here or in the model class
-    expense_nature = expense_nature_from_dict(expense_dict['nature'])
+    expense_nature = expense_nature_from_dict(expense_dict.get('nature',{}))
     expense.nature = expense_nature
 
-    expense_category = expense_category_from_dict(expense_dict['category'])
+    expense_category = expense_category_from_dict(expense_dict.get('category',{}))
     expense.category = expense_category
 
-    expense_subcategory = expense_subcategory_from_dict(expense_dict['subcategory'])
+    expense_subcategory = expense_subcategory_from_dict(expense_dict.get('subcategory',{}))
     expense.subcategory = expense_subcategory
 
     log.info(expense.last_modified_date)
-
 
     if tags_data is not None:
         for tag_data in tags_data:
@@ -84,6 +93,7 @@ def add_expense(expense_dict):
     return committed_expense_dict
 
 def update_expense(id, expense_dict):
+    validate(expense_dict)
     upd_exp = Expense.query.get(id)
     upd_exp.description = expense_dict.get("description", upd_exp.description)
     exp_date = expense_dict.get("expense_date")
