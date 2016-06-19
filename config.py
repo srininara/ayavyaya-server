@@ -7,7 +7,8 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'expense.db')
 # SQLALCHEMY_DATABASE_URI = 'postgresql://grihasthi_app:grihasthi_app1!@localhost/grihasthi_db'
 #SQLALCHEMY_DATABASE_URI = 'postgresql://ayavyaya_app:ayavyaya_app1@localhost/ayavyaya_db'
 SQLALCHEMY_ECHO=False
-#SQLALCHEMY_POOL_SIZE = 15
+SQLALCHEMY_DATABASE_URI = 'postgresql://ayavyaya-dev:ayavyaya-dev@192.168.1.46/ayavyaya-dev'
+SQLALCHEMY_POOL_SIZE = 15
 
 
 DEBUG = True

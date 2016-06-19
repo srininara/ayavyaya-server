@@ -10,9 +10,10 @@ from sqlalchemy import create_engine, MetaData
 # SQLALCHEMY_DATABASE_URI = 'postgresql://ayavyaya_app:ayavyaya_app1@localhost/ayavyaya_db'
 
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-    '../../',
-    'expense.db')
+# SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+#     '../../',
+#     'expense.db')
+SQLALCHEMY_DATABASE_URI = 'postgresql://ayavyaya-dev:ayavyaya-dev@192.168.1.46/ayavyaya-dev'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 # meta = MetaData(bind=engine)

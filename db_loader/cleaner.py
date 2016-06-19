@@ -9,11 +9,11 @@ from sqlalchemy import create_engine, MetaData, select, func
 
 # SQLALCHEMY_DATABASE_URI = 'postgresql://grihasthi_app:grihasthi_app1!@localhost/grihasthi_db'
 # SQLALCHEMY_DATABASE_URI = 'postgresql://ayavyaya_app:ayavyaya_app1@localhost/ayavyaya_db'
+SQLALCHEMY_DATABASE_URI = 'postgresql://ayavyaya-dev:ayavyaya-dev@192.168.1.46/ayavyaya-dev'
 
-
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-    '../',
-    'expense.db')
+# SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
+#     '../',
+#     'expense.db')
 logging.basicConfig(level=logging.INFO)
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
@@ -25,7 +25,7 @@ tag = meta.tables['tag']
 expense = meta.tables['expense']
 connection = engine.connect()
 count_expenses = connection.execute(select([func.count()]).select_from(expense)).scalar()
-logging.info("Going to delete expenses. Count is " + str(count_expenses)); 
+logging.info("Going to delete expenses. Count is " + str(count_expenses));
 del_e_t = expenses_tags.delete()
 connection.execute(del_e_t)
 del_t = tag.delete()
