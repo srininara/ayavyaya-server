@@ -8,3 +8,6 @@ Regular Dev items
 - Convert get default to go to ES instead of database
 - Get by id support in API
 - Test whether Gevent is working with Elasticsearch
+
+Fixed Bugs:
+- Top Priority!!!!!: The pagination returning the same records again. This is potentially a problem with the ordering of records.
