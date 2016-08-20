@@ -14,7 +14,8 @@ patch_psycopg()
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 STATIC_DIR = BASE_DIR + '/fe/'
 app = Flask(__name__, static_url_path='', static_folder=STATIC_DIR)
-app.config.from_object('config')
+app.config.from_object('app.default_config')
+app.config.from_envvar('AYAVYAYA_SETTINGS')
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
