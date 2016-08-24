@@ -15,3 +15,11 @@ logs/
 postgres_logs
 **/*.DS_Store
 logfile
+dist/
+virtualenvs/
+debian/ayavyaya/
+debian/*debhelper*
+debian/ayavyaya.substvars
+debian/files
+ayavyaya.egg-info
+.eggs
