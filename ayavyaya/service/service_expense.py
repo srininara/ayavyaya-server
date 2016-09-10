@@ -16,9 +16,6 @@ from ayavyaya.model.model_expense_category import Expense_Category
 from ayavyaya.model.model_expense_category import expense_category_from_dict
 from ayavyaya.model.model_expense_subcategory import Expense_Subcategory
 from ayavyaya.model.model_expense_subcategory import expense_subcategory_from_dict
-import ayavyaya.service.service_expense_classification_category as excc_sv
-import ayavyaya.service.service_expense_classification_nature as excn_sv
-import ayavyaya.service.daily_expense_aggregator as dagg
 from ayavyaya.model.model_expense import to_dict
 from ayavyaya.date_utils import to_str_from_datetime
 from ayavyaya.date_utils import to_iso_date_from_str
@@ -136,11 +133,6 @@ def get_expenses(index, size):
         expense_dict_list.append(expense_dict)
     return expense_dict_list
 
-
-def get_expense_aggregates(period):
-    return dagg.get_daily_aggregates(period)
-
-
 def get_expense_aggregates_for_classification(classificationType):
     if classificationType == "category":
         category_expenses_tuple_list = db.session.query(
@@ -160,12 +152,3 @@ def get_expense_aggregates_for_classification(classificationType):
         for subcat_expense_tup in subcategory_expenses_tuple_list:
             subcat_expenses.append(_convert_to_json_friendly_exp_classication(subcat_expense_tup, "subcategory"))
         return subcat_expenses
-
-
-def get_expense_aggregates_for_classification_with_split(classificationType, split):
-    if classificationType == "category":
-        return excc_sv.get(split)
-    elif classificationType == "nature":
-        return excn_sv.get()
-
-

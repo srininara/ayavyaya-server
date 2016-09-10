@@ -23,3 +23,5 @@ debian/ayavyaya.substvars
 debian/files
 ayavyaya.egg-info
 .eggs
+.coverage
+htmlcov/
