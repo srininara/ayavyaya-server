@@ -31,25 +31,24 @@ class ExpenseListAPI(Resource):
             expense_out['amount'] = str(expense_out['amount'])
             return expense_out, 201
         except ValueError as err:
-            err_out = {}
-            err_out['message'] = err.message
+            err_out = {'message': err.message}
             return err_out, 400
+
 
 class ExpenseAPI(Resource):
-    def get(self, id):
+    def get(self, expense_id):
         print("expense get")
 
-    def put(self, id):
+    def put(self, expense_id):
         try:
             log.debug("Expense Put Called")
-            expense_updated = ex_sv.update_expense(id, request.json)
+            expense_updated = ex_sv.update_expense(expense_id, request.json)
             return expense_updated, 200
         except ValueError as err:
-            err_out = {}
-            err_out['message'] = err.message
+            err_out = {'message': err.message}
             return err_out, 400
 
-    def delete(self, id):
+    def delete(self, expense_id):
         print("expense delete")
 
 
@@ -61,18 +60,18 @@ class ExpenseAggregatesAPI(Resource):
 
 
 class ClassifiedExpensesAPI(Resource):
-    def get(self, classificationType):
+    def get(self, classification_type):
         split = request.args.get('split')
         if split:
             print(split)
-            output = ex_sv.get_expense_aggregates_for_classification_with_split(classificationType, split)
+            output = ex_sv.get_expense_aggregates_for_classification_with_split(classification_type, split)
         else:
             print(split)
-            output = ex_sv.get_expense_aggregates_for_classification(classificationType)
-        return {classificationType: output}, 200
+            output = ex_sv.get_expense_aggregates_for_classification(classification_type)
+        return {classification_type: output}, 200
 
 api.add_resource(ExpenseListAPI, '/ayavyaya/api/v1.0/expenses', endpoint='expenses')
-api.add_resource(ExpenseAPI, '/ayavyaya/api/v1.0/expenses/<int:id>', endpoint='expense')
+api.add_resource(ExpenseAPI, '/ayavyaya/api/v1.0/expenses/<int:expense_id>', endpoint='expense')
 api.add_resource(ExpenseAggregatesAPI, '/ayavyaya/api/v1.0/expenseAggregates/<string:period>',
                  endpoint='expenseAggregates')
 api.add_resource(ClassifiedExpensesAPI, '/ayavyaya/api/v1.0/expenseClassification/<string:classificationType>',

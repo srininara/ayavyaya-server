@@ -1,5 +1,3 @@
-__author__ = 'srininara'
-
 from ayavyaya.queries import expense_nature_queries as enq
 
 

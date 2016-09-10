@@ -1,6 +1,4 @@
-__author__ = 'srininara'
 import toolz.itertoolz as itz
-
 from ayavyaya.queries import expense_category_queries as ecq
 
 
@@ -11,6 +9,7 @@ def _make_cat_rec(cat_item):
             "subcategories": map(lambda val: {"id": val[3],
                                               "name": val[4], "description": val[5]}, cat_item[1])
             }
+
 
 def get_cat_sub_cat_listing():
     raw_category_listing = ecq.get_cat_sub_cat_listing()

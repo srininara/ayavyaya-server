@@ -17,13 +17,13 @@ class Expense(db.Model):
     amount = db.Column(db.Numeric(12, 2))
 
     category_id = db.Column(db.Integer, db.ForeignKey('expense_category.id'))
-    category = db.relationship('Expense_Category')
+    category = db.relationship('ExpenseCategory')
 
     subcategory_id = db.Column(db.Integer, db.ForeignKey('expense_subcategory.id'))
-    subcategory = db.relationship('Expense_Subcategory')
+    subcategory = db.relationship('ExpenseSubcategory')
 
     nature_id = db.Column(db.Integer, db.ForeignKey('expense_nature.id'))
-    nature = db.relationship('Expense_Nature')
+    nature = db.relationship('ExpenseNature')
 
     expense_tags = db.relationship('Tag', secondary=tags, backref=db.backref('expenses', lazy='dynamic'))
 
@@ -43,10 +43,8 @@ def expense_from_dict(the_dict):
 
 
 def to_dict(expense):
-    out = {}
-    out['id'] = expense.id
-    out['description'] = expense.description
-    out['expense_date'] = to_str_from_datetime(expense.expense_date)
+    out = {'id': expense.id, 'description': expense.description,
+           'expense_date': to_str_from_datetime(expense.expense_date)}
     if expense.last_modified_date:
         out['last_modified_date'] = to_iso_str_from_datetime(expense.last_modified_date)
     # out['amount'] = str(expense.amount)
@@ -65,8 +63,8 @@ def to_dict(expense):
     if subcategory_output:
         out["subcategory"] = subcategory_output
 
-    tagsOutput = []
+    tags_output = []
     for tag in expense.expense_tags:
-        tagsOutput.append(tag_as_dict(tag))
-    out['tags'] = tagsOutput
+        tags_output.append(tag_as_dict(tag))
+    out['tags'] = tags_output
     return out

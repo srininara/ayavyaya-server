@@ -1,12 +1,7 @@
-__author__ = 'srininara'
-
 import functools as ft
-
 import numpy as np
 import toolz.itertoolz as itz
 from operator import add
-
-
 from ayavyaya import db
 from ayavyaya.model.model_expense import Expense
 from ayavyaya.queries import expense_queries as eq
@@ -38,6 +33,7 @@ def _calc_daily_expenses_summary_obj(daily_expense_values_for_a_month):
                    "upper_quartile": _money_format(np.percentile(daily_expense_values_for_a_month, 75))}
     return summary
 
+
 def _compare(curr_value, prev_value, tolerance_limit):
     min_value = prev_value * (1 - (tolerance_limit / 100.0))
     max_value = prev_value * (1 + (tolerance_limit / 100.0))
@@ -59,15 +55,14 @@ def daily_stats(month_identifier):
     prev_month_start_date = prev_month_to(start_date)
     daily_expenses_tuple_list = eq.get_daily_expenses(start_date, end_date)
 
-    daily_expenses_with_cum_expense_tuple_generator = itz.map(lambda daily_expense, cum_value: daily_expense +
-                                                                (cum_value,) ,daily_expenses_tuple_list,
-                                                                   itz.accumulate(add,itz.pluck(1,
-                                                                        daily_expenses_tuple_list)))
+    daily_expenses_with_cum_expense_tuple_generator = itz.map(
+        lambda daily_expense, cum_value: daily_expense + (cum_value,), daily_expenses_tuple_list,
+        itz.accumulate(add, itz.pluck(1, daily_expenses_tuple_list)))
 
     prev_daily_expenses_tuple_list = eq.get_daily_expenses(prev_month_start_date, start_date)
 
-
-    daily_values = [{"expense_date": to_str_from_datetime(expense_date), "daily_expense": float(daily_expense), "cumulative_expense": float(cum_expense)} for
+    daily_values = [{"expense_date": to_str_from_datetime(expense_date), "daily_expense": float(daily_expense),
+                     "cumulative_expense": float(cum_expense)} for
                     expense_date, daily_expense, cum_expense in daily_expenses_with_cum_expense_tuple_generator]
     summary = _calc_daily_expenses_summary_obj([x["daily_expense"] for x in daily_values])
 

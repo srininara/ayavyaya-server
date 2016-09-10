@@ -12,9 +12,9 @@ from ayavyaya.date_utils import to_date
 # from app.model.model_expense import to_dict
 from ayavyaya.model.model_tag import tag_from_dict
 from ayavyaya.model.model_expense_nature import expense_nature_from_dict
-from ayavyaya.model.model_expense_category import Expense_Category
+from ayavyaya.model.model_expense_category import ExpenseCategory
 from ayavyaya.model.model_expense_category import expense_category_from_dict
-from ayavyaya.model.model_expense_subcategory import Expense_Subcategory
+from ayavyaya.model.model_expense_subcategory import ExpenseSubcategory
 from ayavyaya.model.model_expense_subcategory import expense_subcategory_from_dict
 from ayavyaya.model.model_expense import to_dict
 from ayavyaya.date_utils import to_str_from_datetime
@@ -26,13 +26,13 @@ log = app.logger
 
 es = elasticsearch.Elasticsearch()
 
+
 def _convert_to_json_friendly_exp_agg(exp_aggr_tuple):
     return [to_str_from_datetime(exp_aggr_tuple.expense_date), float(exp_aggr_tuple.daily_expense)]
 
 
 def _convert_to_json_friendly_exp_classication(exp_cat_tuple, prefix):
-    return {prefix + "_name": exp_cat_tuple[0]
-        , prefix + "_expenses": float(exp_cat_tuple[1])}
+    return {prefix + "_name": exp_cat_tuple[0], prefix + "_expenses": float(exp_cat_tuple[1])}
 
 
 def _get_start_date(months_back):
@@ -40,6 +40,7 @@ def _get_start_date(months_back):
     first = datetime.date(day=1, month=today.month, year=today.year)
     start = first + relativedelta(months=months_back)
     return start
+
 
 def _add_to_es(committed_expense_dict=None):
     pass
@@ -63,13 +64,13 @@ def add_expense(expense_dict):
     tags_data = expense_dict.get('tags', None)
 
     # TODO: Not sure if this belongs here or in the model class
-    expense_nature = expense_nature_from_dict(expense_dict.get('nature',{}))
+    expense_nature = expense_nature_from_dict(expense_dict.get('nature', {}))
     expense.nature = expense_nature
 
-    expense_category = expense_category_from_dict(expense_dict.get('category',{}))
+    expense_category = expense_category_from_dict(expense_dict.get('category', {}))
     expense.category = expense_category
 
-    expense_subcategory = expense_subcategory_from_dict(expense_dict.get('subcategory',{}))
+    expense_subcategory = expense_subcategory_from_dict(expense_dict.get('subcategory', {}))
     expense.subcategory = expense_subcategory
 
     log.info(expense.last_modified_date)
@@ -84,14 +85,13 @@ def add_expense(expense_dict):
     committed_expense_dict = to_dict(expense)
 
     log.info(committed_expense_dict)
-
-
     _add_to_es(committed_expense_dict)
     return committed_expense_dict
 
-def update_expense(id, expense_dict):
+
+def update_expense(expense_id, expense_dict):
     validate(expense_dict)
-    upd_exp = Expense.query.get(id)
+    upd_exp = Expense.query.get(expense_id)
     upd_exp.description = expense_dict.get("description", upd_exp.description)
     exp_date = expense_dict.get("expense_date")
     upd_exp.expense_date = to_date(exp_date) if exp_date else upd_exp.expense_date
@@ -133,21 +133,22 @@ def get_expenses(index, size):
         expense_dict_list.append(expense_dict)
     return expense_dict_list
 
-def get_expense_aggregates_for_classification(classificationType):
-    if classificationType == "category":
+
+def get_expense_aggregates_for_classification(classification_type):
+    if classification_type == "category":
         category_expenses_tuple_list = db.session.query(
-            Expense_Category.name.label("category"), db.func.sum(Expense.amount).label("category_expenses")).join(
+            ExpenseCategory.name.label("category"), db.func.sum(Expense.amount).label("category_expenses")).join(
             Expense).group_by(
-            Expense_Category.id).order_by(db.desc("category_expenses")).all()
+            ExpenseCategory.id).order_by(db.desc("category_expenses")).all()
         cat_expenses = []
         for cat_expense_tup in category_expenses_tuple_list:
             cat_expenses.append(_convert_to_json_friendly_exp_classication(cat_expense_tup, "category"))
         return cat_expenses
-    elif classificationType == "subcategory":
+    elif classification_type == "subcategory":
         subcategory_expenses_tuple_list = db.session.query(
-            Expense_Subcategory.name.label("subcategory"),
+            ExpenseSubcategory.name.label("subcategory"),
             db.func.sum(Expense.amount).label("subcategory_expenses")).join(Expense).group_by(
-            Expense_Subcategory.id).order_by(db.desc("subcategory_expenses")).all()
+            ExpenseSubcategory.id).order_by(db.desc("subcategory_expenses")).all()
         subcat_expenses = []
         for subcat_expense_tup in subcategory_expenses_tuple_list:
             subcat_expenses.append(_convert_to_json_friendly_exp_classication(subcat_expense_tup, "subcategory"))

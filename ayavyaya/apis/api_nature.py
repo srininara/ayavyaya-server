@@ -1,5 +1,3 @@
-__author__ = 'srininara'
-
 from flask.ext.restful import Resource
 from ayavyaya import api
 import ayavyaya.service.service_nature as nat_sv

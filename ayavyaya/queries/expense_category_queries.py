@@ -1,14 +1,14 @@
 from ayavyaya import db
-from ayavyaya.model.model_expense_category import Expense_Category
-from ayavyaya.model.model_expense_subcategory import Expense_Subcategory
+from ayavyaya.model.model_expense_category import ExpenseCategory
+from ayavyaya.model.model_expense_subcategory import ExpenseSubcategory
 
 
 def get_cat_sub_cat_listing():
-    return db.session.query(Expense_Category.id.label("cat_id"),
-                            Expense_Category.name.label("category"),
-                            Expense_Category.description.label("cat_desc"),
-                            Expense_Subcategory.id.label("subcat_id"),
-                            Expense_Subcategory.name.label("sub_category"),
-                            Expense_Subcategory.description.label("subcat_desc")).join(
-        Expense_Subcategory,
-        Expense_Subcategory.category_id == Expense_Category.id).all()
+    return db.session.query(ExpenseCategory.id.label("cat_id"),
+                            ExpenseCategory.name.label("category"),
+                            ExpenseCategory.description.label("cat_desc"),
+                            ExpenseSubcategory.id.label("subcat_id"),
+                            ExpenseSubcategory.name.label("sub_category"),
+                            ExpenseSubcategory.description.label("subcat_desc")).join(
+        ExpenseSubcategory,
+        ExpenseSubcategory.category_id == ExpenseCategory.id).all()

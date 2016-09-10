@@ -6,7 +6,9 @@ log = app.logger
 
 
 DEFAULT_NOT_AVAILABLE_ID = - 1000
-class Expense_Nature(db.Model):
+
+
+class ExpenseNature(db.Model):
     __tablename__ = 'expense_nature'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
@@ -28,17 +30,17 @@ def to_dict(expense_nature):
 
 def expense_nature_from_dict(the_dict):
     log.debug(the_dict)
-    id = the_dict.get('id', DEFAULT_NOT_AVAILABLE_ID)
+    nature_id = the_dict.get('id', DEFAULT_NOT_AVAILABLE_ID)
     name = the_dict.get('name', "")
     description = the_dict.get('description', "")
-    if id and id != DEFAULT_NOT_AVAILABLE_ID:
-        expense_nature = Expense_Nature.query.get(id)
+    if nature_id and nature_id != DEFAULT_NOT_AVAILABLE_ID:
+        expense_nature = ExpenseNature.query.get(nature_id)
         return expense_nature
     elif name and name != "":
-        expense_nature = Expense_Nature.query.filter_by(name=name).first()
+        expense_nature = ExpenseNature.query.filter_by(name=name).first()
         if expense_nature is None:
             raise ValueError("Can't find a nature with this name")
         return expense_nature
     else:
-        expense_nature = Expense_Nature.query.get(DEFAULT_NOT_AVAILABLE_ID)
+        expense_nature = ExpenseNature.query.get(DEFAULT_NOT_AVAILABLE_ID)
         return expense_nature

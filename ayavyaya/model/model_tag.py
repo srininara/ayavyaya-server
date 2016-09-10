@@ -4,7 +4,7 @@ from ayavyaya import db
 tags = db.Table('expenses_tags',
                 db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
                 db.Column('expense_id', db.Integer, db.ForeignKey('expense.id')),
-)
+                )
 
 
 class Tag(db.Model):
@@ -16,17 +16,15 @@ class Tag(db.Model):
 
 
 def to_dict(tag):
-    out = {}
-    out['id'] = tag.id
-    out['name'] = tag.name
+    out = {'id': tag.id, 'name': tag.name}
     return out
 
 
 def tag_from_dict(the_dict):
-    id = the_dict.get('id', -1)
+    tag_id = the_dict.get('id', -1)
     name = the_dict.get('name', "")
-    if id != -1:
-        tag = Tag.query.get(id)
+    if tag_id != -1:
+        tag = Tag.query.get(tag_id)
         return tag
     elif name != "":
         tag = Tag.query.filter_by(name=name).first()

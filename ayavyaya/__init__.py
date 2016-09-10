@@ -8,6 +8,7 @@ from psycogreen.gevent import patch_psycopg
 from flask.ext.restful import Api
 from flask.ext.sqlalchemy import SQLAlchemy
 
+
 patch_all()
 patch_psycopg()
 
@@ -24,6 +25,7 @@ except RuntimeError:
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
+
 @app.before_first_request
 def setup_logging():
     if not app.debug:
@@ -34,7 +36,8 @@ def setup_logging():
         log_file_count = app.config['LOG_FILE_COUNT']
         log_format = app.config['LOG_FORMAT']
         log_level = app.config['LOG_LEVEL']
-        handler = logging.handlers.RotatingFileHandler(log_file_path,maxBytes=log_file_size, backupCount=log_file_count)
+        handler = logging.handlers.RotatingFileHandler(log_file_path, maxBytes=log_file_size,
+                                                       backupCount=log_file_count)
         handler.setFormatter(logging.Formatter(log_format))
         app.logger.addHandler(handler)
         app.logger.setLevel(log_level)

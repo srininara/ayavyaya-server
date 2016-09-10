@@ -1,5 +1,3 @@
-__author__ = 'srininara'
-
 from flask.ext.restful import Resource
 from ayavyaya import api
 import ayavyaya.service.month_stats_provider as msp
@@ -8,9 +6,10 @@ import ayavyaya.service.month_stats_provider as msp
 class MonthStatsDailyAPI(Resource):
     def get(self, month_identifier):
         # Behavior note: Even when data for the criteria is not found, the stats apis returns 200 with empty shells
-        output = {}
-        output["dailyData"], output["summary"], output["prev_month_summary"], output["comparison"] = msp.daily_stats(
-            month_identifier)
+        output_arr = msp.daily_stats(month_identifier)
+
+        output = {"dailyData": output_arr[0], "summary": output_arr[1], "prev_month_summary": output_arr[2],
+                  "comparison": output_arr[3]}
         return output, 200
 
 
@@ -24,8 +23,8 @@ class MonthStatsCategoryAPI(Resource):
 class MonthStatsTopExpensesAPI(Resource):
     def get(self, month_identifier):
         # Behavior note: Even when data for the criteria is not found, the stats apis returns 200 with empty shells
-        output = {}
-        output["topExpensesByValue"], output["topExpensesByFrequency"] = msp.top_expenses_stats(month_identifier)
+        output_arr = msp.top_expenses_stats(month_identifier)
+        output = dict(topExpensesByValue=output_arr[0], topExpensesByFrequency=output_arr[1])
         return output, 200
 
 
