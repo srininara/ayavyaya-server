@@ -1,12 +1,18 @@
 Bugs:
 - Update of expense which removes a tag does not work - tag is not removed.
-
+- This output is observed when shutting the interpreter - Exception KeyError: KeyError(140414079481808,) in <module 'threading' from '/usr/lib/python2.7/threading.pyc'> ignored
+  It is related to gevent.
 
 Regular Dev items
 - Validate expense - date and amount always mandatory
 - Validate expense - either description or category is mandatory
+D10005. Search for expenses
+D10006. Show nature of expenses as a graph in the dashboard
 - Convert get default to go to ES instead of database
 - Get by id support in API
+
+
+
 - Test whether Gevent is working with Elasticsearch
 
 Fixed Bugs:

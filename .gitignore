@@ -25,3 +25,5 @@ ayavyaya.egg-info
 .eggs
 .coverage
 htmlcov/
+reports/
+.cache/

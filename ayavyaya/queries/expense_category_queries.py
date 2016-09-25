@@ -4,6 +4,7 @@ from ayavyaya.model.model_expense_subcategory import ExpenseSubcategory
 
 
 def get_cat_sub_cat_listing():
+    """Returns expense category and sub category listing"""
     return db.session.query(ExpenseCategory.id.label("cat_id"),
                             ExpenseCategory.name.label("category"),
                             ExpenseCategory.description.label("cat_desc"),

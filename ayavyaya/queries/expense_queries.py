@@ -5,6 +5,7 @@ from ayavyaya.model.model_expense_subcategory import ExpenseSubcategory
 
 
 def get_daily_expenses(start_date, end_date):
+    """Provides daily expense value (sum) from a given start and end date"""
     return db.session.query(
         Expense.expense_date, db.func.sum(Expense.amount).label("daily_expense")).filter(
         Expense.expense_date >= start_date, Expense.expense_date < end_date).group_by(
@@ -12,6 +13,7 @@ def get_daily_expenses(start_date, end_date):
 
 
 def get_expenses_with_category_info(start_date, end_date):
+    """Returns expense records along with their category and subcategory names"""
     return db.session.query(Expense.amount.label("expense"),
                             ExpenseCategory.name.label("category"),
                             ExpenseSubcategory.name.label("sub_category")).join(
@@ -21,5 +23,6 @@ def get_expenses_with_category_info(start_date, end_date):
 
 
 def get_expenses(start_date, start_index, no_of_recs):
+    """  Get a page of expenses which happened on or before the given date using index and page size parameters """
     return db.session.query(Expense).filter(Expense.expense_date <= start_date).order_by(
         Expense.expense_date.desc(), Expense.id.desc()).offset(start_index).limit(no_of_recs).all()

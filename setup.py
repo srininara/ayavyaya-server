@@ -11,7 +11,7 @@ setup(
 	license="",
 	author="Srinivas Narayanan",
 	author_email="srininara@gmail.com",
-	packages=find_packages(),
+	packages=find_packages(exclude=["tests.*", "tests"]),
 	include_package_data=True,
 	zip_safe=False,
 	package_data={

@@ -1,16 +1,27 @@
+'''This is the main module which holds the entire ayavyaya server code.'''
+import sys
+if 'threading' in sys.modules:
+    del sys.modules['threading']
+from gevent.monkey import patch_all
+patch_all()
+
+# noinspection PyPep8
 import os
 
+# noinspection PyPep8
 from flask import Flask
+# noinspection PyPep8
 from werkzeug.contrib.fixers import ProxyFix
-from gevent.monkey import patch_all
-from psycogreen.gevent import patch_psycopg
 
+# noinspection PyPep8
+from psycogreen.gevent import patch_psycopg
+patch_psycopg()
+
+# noinspection PyPep8
 from flask.ext.restful import Api
+# noinspection PyPep8
 from flask.ext.sqlalchemy import SQLAlchemy
 
-
-patch_all()
-patch_psycopg()
 
 # BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_DIR = os.path.dirname(__file__)
@@ -47,8 +58,13 @@ db.engine.pool._use_threadlocal = True
 
 api = Api(app)
 
+# noinspection PyPep8
 from ayavyaya.apis import api_month_expense_stats
+# noinspection PyPep8
 from ayavyaya.apis import api_expense
+# noinspection PyPep8
 from ayavyaya.apis import api_category
+# noinspection PyPep8
 from ayavyaya.apis import api_nature
+# noinspection PyPep8
 from ayavyaya import app_fe
