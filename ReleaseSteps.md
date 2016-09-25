@@ -7,6 +7,7 @@
 * Check if there are any changes to production config
 * Create date of release folder inside releases
 * Copy the debian package, migrations and production config into the created date folder under releases
+* Move the release specific artifacts to auto-setup provisioning folders
 * Run data backup from production database
 * Destroy application vm using vagrant
 * recreate application vm using vagrant and ansible
