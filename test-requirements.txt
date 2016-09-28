@@ -3,3 +3,5 @@ pytest==3.0.2
 pytest-cov==2.3.1
 mock==2.0.0
 pylint==1.6.4
+behave==1.2.5
+behave-web-api==1.0.6
