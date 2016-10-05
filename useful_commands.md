@@ -12,4 +12,21 @@
 * `dpkg-buildpackage -us -uc`
 
 ### Running Migrations
-/usr/share/python/ayavyaya/bin/ayavyaya_mgr.py db upgrade
+`/usr/share/python/ayavyaya/bin/ayavyaya_mgr.py db upgrade`
+
+### Running Acceptance Tests
+    # Run tests against flask runserver in dev virtualenv
+    source ./virtualenvs/dev/bin/activate    
+    ./ayavyaya_devruner.py runserver
+
+    # Run behave
+    ./test/run_behave.sh
+
+### Running Perf Tests
+    # Start the gunicorn server under dev virtualenv
+    source ./virtualenvs/dev/bin/activate
+    ./ayavyaya_dev.sh
+
+    # Start locust under perf virtualenv
+    source ./virtualenvs/perf/bin/activate
+    ./test/run_locust.sh my_perf_test.py
