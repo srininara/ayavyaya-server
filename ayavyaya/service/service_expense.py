@@ -110,6 +110,7 @@ def update_expense(expense_id, expense_dict):
     expense_subcategory = expense_subcategory_from_dict(expense_dict.get('subcategory'))
     upd_exp.subcategory = expense_subcategory
 
+    upd_exp.remove_all_tags()
     if tags_data is not None:
         for tag_data in tags_data:
             tag = tag_from_dict(tag_data)

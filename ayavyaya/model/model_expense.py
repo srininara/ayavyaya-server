@@ -8,6 +8,10 @@ from ayavyaya.model.model_expense_nature import to_dict as nature_as_dict
 from ayavyaya.model.model_expense_category import to_dict as category_as_dict
 from ayavyaya.model.model_expense_subcategory import to_dict as subcategory_as_dict
 
+expense_tag_xref = db.Table('expenses_tags',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
+    db.Column('expense_id', db.Integer, db.ForeignKey('expense.id')), extend_existing=True
+)
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,7 +29,7 @@ class Expense(db.Model):
     nature_id = db.Column(db.Integer, db.ForeignKey('expense_nature.id'))
     nature = db.relationship('ExpenseNature')
 
-    expense_tags = db.relationship('Tag', secondary=tags, backref=db.backref('expenses', lazy='dynamic'))
+    expense_tags = db.relationship('Tag', secondary=expense_tag_xref, backref=db.backref('expenses', lazy='dynamic'))
 
     def __init__(self, description, expense_date, amount):
         self.description = description
@@ -34,6 +38,9 @@ class Expense(db.Model):
 
     def add_tag(self, tag):
         self.expense_tags.append(tag)
+
+    def remove_all_tags(self):
+        self.expense_tags[:] = []
 
 
 def expense_from_dict(the_dict):
