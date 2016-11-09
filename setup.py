@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name="ayavyaya",
-	version="0.0.1",
+	version="0.0.2",
 	description="expense tracker",
 	long_description=("Tracking expenses for the family"),
 	url="http://www.nacnez.com/",
