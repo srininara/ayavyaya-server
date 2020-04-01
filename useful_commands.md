@@ -30,3 +30,4 @@
     # Start locust under perf virtualenv
     source ./virtualenvs/perf/bin/activate
     ./test/run_locust.sh my_perf_test.py
+

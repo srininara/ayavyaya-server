@@ -27,3 +27,4 @@ ayavyaya.egg-info
 htmlcov/
 reports/
 .cache/
+venv/
