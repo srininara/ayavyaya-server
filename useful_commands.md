@@ -31,3 +31,11 @@
     source ./virtualenvs/perf/bin/activate
     ./test/run_locust.sh my_perf_test.py
 
+### PG dump
+    
+    pg_dump --column-inserts --data-only --table=expense_nature ayavyaya_db > expense_nature.sql
+    pg_dump --column-inserts --data-only --table=expense_category ayavyaya_db > expense_category.sql
+    pg_dump --column-inserts --data-only --table=expense_subcategory ayavyaya_db > expense_subcategory.sql
+    pg_dump --column-inserts --data-only --table=tag ayavyaya_db > tag_20200402.sql
+    pg_dump --column-inserts --data-only --table=expense ayavyaya_db > expense_20200402.sql
+    pg_dump --column-inserts --data-only --table=expenses_tags ayavyaya_db > expenses_tags_20200402.sql    
